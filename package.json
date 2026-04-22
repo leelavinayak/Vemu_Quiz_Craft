@@ -15,8 +15,10 @@
     "start": "node server/server.js",
     "start:prod": "NODE_ENV=production node server/server.js",
     "client": "cd client && npm run dev",
-    "server": "cd server && npm run dev"
+    "server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
