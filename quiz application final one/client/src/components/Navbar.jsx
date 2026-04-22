@@ -12,7 +12,8 @@ import {
     Bell,
     Menu,
     X,
-    ShieldCheck
+    ShieldCheck,
+    Sparkles
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -79,8 +80,8 @@ const Navbar = () => {
             <div className="w-full flex justify-between items-center transition-all duration-500">
                 {/* Logo / Title — Left End */}
                 <Link to="/" className="flex items-center space-x-3 group shrink-0 active:scale-95 transition-all duration-300">
-                    <div className="bg-blue-600 p-2.5 rounded-2xl shadow-lg shadow-blue-100 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500">
-                        <BookOpen className="text-white" size={24} />
+                    <div className="bg-blue-600 p-2.5 rounded-2xl shadow-lg shadow-blue-100 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 rotate-3">
+                        <Sparkles className="text-white" size={24} />
                     </div>
                     <span className="text-2xl font-black tracking-tighter text-slate-800">
                         Quiz<span className="text-blue-600">Craft</span>

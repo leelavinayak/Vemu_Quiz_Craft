@@ -152,9 +152,9 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
         if (user && (await bcrypt.compare(password, user.password))) {
             if (!user.isVerified) {
-                return res.status(401).json({ 
+                return res.status(401).json({
                     message: 'Account not verified. Please verify your OTP.',
-                    isPendingVerification: true 
+                    isPendingVerification: true
                 });
             }
             res.json({
@@ -204,7 +204,7 @@ const updateProfile = async (req, res) => {
             if (req.body.branch !== undefined) user.branch = req.body.branch;
             if (req.body.year !== undefined) user.year = req.body.year;
             if (req.body.collegeName !== undefined) user.collegeName = req.body.collegeName;
-            
+
             const updatedUser = await user.save();
             res.json({
                 _id: updatedUser._id,

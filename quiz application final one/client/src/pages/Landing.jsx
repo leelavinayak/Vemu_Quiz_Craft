@@ -88,9 +88,9 @@ const Landing = () => {
                                     <span>Create Free Account</span>
                                     <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={24} />
                                 </button>
-                                <button className="w-full sm:w-auto px-10 py-5 border-2 border-slate-100 rounded-2xl font-black text-lg text-slate-600 hover:bg-slate-50 transition-all">
+                                {/* <button className="w-full sm:w-auto px-10 py-5 border-2 border-slate-100 rounded-2xl font-black text-lg text-slate-600 hover:bg-slate-50 transition-all">
                                     Book Demo
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 
