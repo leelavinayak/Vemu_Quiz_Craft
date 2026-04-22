@@ -11,7 +11,9 @@
     "postinstall": "npm run install-server",
     "install-client": "cd client && npm install",
     "build": "npm run install-server",
+    "build:client": "cd client && npm install && npm run build",
     "start": "node server/server.js",
+    "start:prod": "NODE_ENV=production node server/server.js",
     "client": "cd client && npm run dev",
     "server": "cd server && npm run dev"
   },
