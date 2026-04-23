@@ -21,6 +21,9 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts';
+import ConfirmModal from '../../components/ConfirmModal';
+import toast from 'react-hot-toast';
+import { Trash2 } from 'lucide-react';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -33,20 +36,30 @@ const AdminDashboard = () => {
     };
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [quizSearchTerm, setQuizSearchTerm] = useState('');
-    const [tableSearchTerm, setTableSearchTerm] = useState('');
+    const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
+
+    const fetchStats = async () => {
+        try {
+            const { data } = await api.get('/admin/dashboard');
+            setData(data);
+        } catch (err) {
+            toast.error('Failed to fetch dashboard metrics');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/admin/attempt/${confirmDelete.id}`);
+            toast.success('Record purged successfully');
+            fetchStats();
+        } catch (err) {
+            toast.error('Failed to delete record');
+        }
+    };
 
     useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const { data } = await api.get('/admin/dashboard');
-                setData(data);
-            } catch (err) {
-                console.error('Failed to fetch stats', err);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchStats();
     }, []);
 
@@ -68,54 +81,72 @@ const AdminDashboard = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-6 pt-12 pb-12 page-enter">
+            <ConfirmModal 
+                isOpen={confirmDelete.open}
+                onClose={() => setConfirmDelete({ open: false, id: null })}
+                onConfirm={handleDelete}
+                title="Purge Record"
+                message="Are you sure you want to permanently delete this assessment record? This action cannot be undone."
+                confirmText="Purge Record"
+            />
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-slate-800 tracking-tight">Admin Overview</h1>
                     <p className="text-slate-500 mt-2 text-lg">Real-time performance metrics and student activity.</p>
                 </div>
 
-                <div className="relative w-full md:w-96 group">
-                    <div className="flex items-center space-x-2">
-                        <div className="relative flex-1">
-                            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
-                                <Search size={18} />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search assessment..."
-                                className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 pl-12 pr-4 text-[11px] font-black text-slate-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all placeholder:text-slate-300 uppercase tracking-widest"
-                                value={quizSearchTerm}
-                                onChange={(e) => setQuizSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <button
-                            className="bg-blue-600 text-white p-3.5 rounded-2xl shadow-lg shadow-blue-100 hover:bg-slate-900 transition-all group/btn"
-                        >
-                            <Search size={18} className="group-hover/btn:scale-110 transition-transform" />
-                        </button>
-                    </div>
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
+                    <button
+                        onClick={() => navigate('/admin/reports')}
+                        className="bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-slate-200 flex items-center justify-center space-x-2"
+                    >
+                        <BarChart3 size={18} />
+                        <span>View Detailed Reports</span>
+                    </button>
 
-                    {/* Search Results Dropdown */}
-                    {quizSearchTerm.length > 0 && (
-                        <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-[2rem] border border-slate-100 shadow-2xl p-4 z-50 animate-fade-in max-h-60 overflow-y-auto scrollbar-thin">
-                            {data?.quizStats
-                                ?.filter(q => q.title.toLowerCase().includes(quizSearchTerm.toLowerCase()))
-                                .map((quiz, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => navigate(`/admin/quiz/${quiz.id}/leaderboard`)}
-                                        className="w-full text-left p-4 rounded-xl hover:bg-blue-50 transition-colors group/item flex items-center justify-between"
-                                    >
-                                        <div>
-                                            <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest group-hover/item:text-blue-600 transition-colors">{quiz.title}</p>
-                                            <p className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase">Performance Summary</p>
-                                        </div>
-                                        <ChevronRight size={14} className="text-slate-200 group-hover/item:text-blue-600 transition-colors" />
-                                    </button>
-                                ))
-                            }
+                    <div className="relative w-full md:w-96 group">
+                        <div className="flex items-center space-x-2">
+                            <div className="relative flex-1">
+                                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
+                                    <Search size={18} />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Search assessment..."
+                                    className="w-full bg-white border border-slate-100 rounded-2xl py-3.5 pl-12 pr-4 text-[11px] font-black text-slate-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all placeholder:text-slate-300 uppercase tracking-widest"
+                                    value={quizSearchTerm}
+                                    onChange={(e) => setQuizSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <button
+                                className="bg-blue-600 text-white p-3.5 rounded-2xl shadow-lg shadow-blue-100 hover:bg-slate-900 transition-all group/btn"
+                            >
+                                <Search size={18} className="group-hover/btn:scale-110 transition-transform" />
+                            </button>
                         </div>
-                    )}
+
+                        {/* Search Results Dropdown */}
+                        {quizSearchTerm.length > 0 && (
+                            <div className="absolute top-full mt-3 left-0 right-0 bg-white rounded-[2rem] border border-slate-100 shadow-2xl p-4 z-50 animate-fade-in max-h-60 overflow-y-auto scrollbar-thin">
+                                {data?.quizStats
+                                    ?.filter(q => q.title.toLowerCase().includes(quizSearchTerm.toLowerCase()))
+                                    .map((quiz, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => navigate(`/admin/quiz/${quiz.id}/leaderboard`)}
+                                            className="w-full text-left p-4 rounded-xl hover:bg-blue-50 transition-colors group/item flex items-center justify-between"
+                                        >
+                                            <div>
+                                                <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest group-hover/item:text-blue-600 transition-colors">{quiz.title}</p>
+                                                <p className="text-[8px] font-bold text-slate-400 mt-0.5 uppercase">Performance Summary</p>
+                                            </div>
+                                            <ChevronRight size={14} className="text-slate-200 group-hover/item:text-blue-600 transition-colors" />
+                                        </button>
+                                    ))
+                                }
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

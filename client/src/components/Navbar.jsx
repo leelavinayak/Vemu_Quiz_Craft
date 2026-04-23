@@ -14,7 +14,8 @@ import {
     Menu,
     X,
     ShieldCheck,
-    Sparkles
+    Sparkles,
+    FileText
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -67,6 +68,7 @@ const Navbar = () => {
         if (path.includes('/admin/dashboard') || path === '/admin') return 'dashboard';
         if (path.includes('/admin/users')) return 'users';
         if (path.includes('/admin/add-quiz')) return 'add-quiz';
+        if (path.includes('/admin/reports')) return 'reports';
         if (path.includes('/history')) return 'history';
         if (path.includes('/student/home')) return 'quizzes';
         if (path.includes('/my-results')) return 'results';
@@ -93,17 +95,18 @@ const Navbar = () => {
     return (
         <nav className={`w-full border-b transition-all duration-500 sticky top-0 z-50 ${
             isScrolled 
-            ? 'bg-white/95 backdrop-blur-3xl py-2 px-6 md:px-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-blue-100/50' 
-            : 'bg-transparent py-4 px-6 md:px-12 border-transparent'
+            ? 'bg-white/95 backdrop-blur-3xl py-2 px-4 md:px-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-blue-100/50' 
+            : 'bg-transparent py-4 px-4 md:px-12 border-transparent'
         }`}>
-            <div className="w-full flex justify-between items-center transition-all duration-500">
+            <div className="w-full flex justify-between items-center transition-all duration-500 max-w-7xl mx-auto">
                 {/* Logo / Title — Left End */}
-                <Link to="/" className="flex items-center space-x-3 group shrink-0 active:scale-95 transition-all duration-300">
-                    <div className="bg-blue-600 p-2.5 rounded-2xl shadow-lg shadow-blue-100 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 rotate-3">
-                        <Sparkles className="text-white" size={24} />
+                <Link to="/" className="flex items-center space-x-2 md:space-x-3 group shrink-0 active:scale-95 transition-all duration-300">
+                    <div className="bg-blue-600 p-2 md:p-2.5 rounded-xl md:rounded-2xl shadow-lg shadow-blue-100 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 rotate-3">
+                        <Sparkles className="text-white size-4 md:size-6" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-slate-800">
-                        Quiz<span className="text-blue-600">Craft</span>
+                    <span className="text-sm md:text-2xl font-black tracking-tighter text-slate-800 flex flex-col md:flex-row md:items-center leading-none">
+                        <span>Weekly</span>
+                        <span className="text-blue-600 md:ml-2">Aptitude Test</span>
                     </span>
                 </Link>
 
@@ -127,6 +130,11 @@ const Navbar = () => {
                                     <span>Add Quiz</span>
                                     {hoverUnderline('add-quiz')}
                                 </Link>
+                                <Link to="/admin/reports" className={linkClass('reports')}>
+                                    <FileText size={18} />
+                                    <span>Reports</span>
+                                    {hoverUnderline('reports')}
+                                </Link>
                                 <Link to="/history" className={linkClass('history')}>
                                     <History size={18} />
                                     <span>History</span>
@@ -149,23 +157,19 @@ const Navbar = () => {
                         )}
                     </div>
 
-                    <div className="hidden"></div>
-
-                    <div className="flex items-center gap-1 lg:gap-4">
+                    <div className="flex items-center gap-1 md:gap-4">
                         {/* Notifications */}
-                        <Link to="/notifications" className="relative p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-2xl transition-all group active:scale-90">
-                            <Bell size={22} className="group-hover:rotate-12 transition-transform duration-500" />
+                        <Link to="/notifications" className="relative p-2 md:p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl md:rounded-2xl transition-all group active:scale-90">
+                            <Bell size={20} className="group-hover:rotate-12 md:size-[22px] transition-transform duration-500" />
                             {unreadCount > 0 && (
-                                <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm scale-110"></span>
+                                <span className="absolute top-2 right-2 md:top-2.5 md:right-2.5 w-2 md:w-2.5 h-2 md:h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm"></span>
                             )}
                         </Link>
 
-                        <div className="hidden"></div>
-
                         {/* Profile Pill */}
-                        <div className="flex items-center gap-3 group/profile p-1.5 pr-2.5 pl-3.5 bg-slate-50/80 rounded-[1.25rem] border border-slate-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-50/50 transition-all duration-500 cursor-pointer">
-                            <Link to="/profile" className="flex items-center gap-4">
-                                <div className="flex flex-col items-end hidden sm:block">
+                        <div className="flex items-center gap-2 md:gap-3 group/profile p-1 md:p-1.5 pr-2 md:pr-2.5 pl-2 md:pl-3.5 bg-slate-50/80 rounded-xl md:rounded-[1.25rem] border border-slate-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-50/50 transition-all duration-500 cursor-pointer">
+                            <Link to="/profile" className="flex items-center gap-2 md:gap-4">
+                                <div className="flex flex-col items-end hidden md:block">
                                     <span className="text-[13px] font-black text-slate-800 leading-none group-hover/profile:text-blue-600 transition-colors">
                                         {user?.name}
                                     </span>
@@ -179,34 +183,24 @@ const Navbar = () => {
                                         <img 
                                             src={user.profilePic} 
                                             alt="Profile" 
-                                            className="w-10 h-10 rounded-xl object-cover ring-2 ring-white shadow-md group-hover/profile:ring-blue-100 group-hover/profile:scale-105 transition-all duration-500" 
+                                            className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl object-cover ring-2 ring-white shadow-md group-hover/profile:ring-blue-100 group-hover/profile:scale-105 transition-all duration-500" 
                                         />
                                     ) : (
-                                        <div className="w-10 h-10 bg-blue-600 text-white font-black rounded-xl flex items-center justify-center shadow-lg group-hover/profile:scale-105 group-hover/profile:rotate-3 transition-all duration-500">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-600 text-white font-black rounded-lg md:rounded-xl flex items-center justify-center text-xs md:text-base shadow-lg group-hover/profile:scale-105 group-hover/profile:rotate-3 transition-all duration-500">
                                             {user?.name?.charAt(0)}
                                         </div>
                                     )}
-                                    <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
                                 </div>
                             </Link>
-
-                            <div className="hidden"></div>
-
-                            <button 
-                                onClick={handleLogout}
-                                className="hidden p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-90"
-                                title="Logout"
-                            >
-                                <LogOut size={20} />
-                            </button>
                         </div>
 
                         {/* Hamburger Button (Mobile) */}
                         <button 
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="flex p-2.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-2xl transition-all active:scale-95 border border-transparent hover:border-blue-100 shadow-sm"
+                            className="flex p-2 md:p-2.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl md:rounded-2xl transition-all active:scale-95 border border-transparent hover:border-blue-100 shadow-sm"
                         >
-                            {isMenuOpen ? <X size={26} className="animate-scale-up" /> : <Menu size={26} className="animate-scale-up" />}
+                            {isMenuOpen ? <X size={22} className="animate-scale-up md:size-[26px]" /> : <Menu size={22} className="animate-scale-up md:size-[26px]" />}
                         </button>
                     </div>
                 </div>
@@ -227,6 +221,10 @@ const Navbar = () => {
                             <Link to="/admin/users" className={`mobile-menu-item ${activePage === 'users' ? 'bg-blue-50 text-blue-600' : ''}`} onClick={() => setIsMenuOpen(false)}>
                                 <UserIcon size={20} />
                                 <span>Student Directory</span>
+                            </Link>
+                             <Link to="/admin/reports" className={`mobile-menu-item ${activePage === 'reports' ? 'bg-blue-50 text-blue-600' : ''}`} onClick={() => setIsMenuOpen(false)}>
+                                <FileText size={20} />
+                                <span>Performance Analytics</span>
                             </Link>
                             <Link to="/admin/add-quiz" className={`mobile-menu-item ${activePage === 'add-quiz' ? 'bg-blue-50 text-blue-600' : ''}`} onClick={() => setIsMenuOpen(false)}>
                                 <PlusCircle size={20} />

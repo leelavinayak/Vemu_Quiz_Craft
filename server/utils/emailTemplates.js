@@ -1,5 +1,5 @@
 /**
- * Email Templates for QuizCraft Platform
+ * Email Templates for Weekly Aptitude Test Platform
  * High-fidelity HTML templates for professional communication.
  * Design Philosophy: Premium, High-Contrast, Data-Driven Aesthetics.
  */
@@ -43,14 +43,14 @@ const baseTemplate = (content, title) => `
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">Quiz<span>Craft</span></div>
+            <div class="logo">Weekly Aptitude Test</div>
         </div>
         <div class="content">
             <h1 class="title">${title}</h1>
             ${content}
         </div>
         <div class="footer">
-            &copy; 2026 <strong>QuizCraft Intelligence Systems</strong>. All Rights Reserved.<br>
+            &copy; 2026 <strong>Weekly Aptitude Test Systems</strong>. All Rights Reserved.<br>
             <p style="margin-top: 10px; opacity: 0.8;">You are receiving this because you hold an active academic identity on our secure cloud nodes.</p>
             <div style="margin-top: 20px;">
                 <span style="margin: 0 8px; text-decoration: none; color: ${primaryColor}; font-weight: bold;">Support Center</span>

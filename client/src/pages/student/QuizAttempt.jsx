@@ -2,11 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { 
-    Clock, 
-    ArrowRight, 
-    ArrowLeft, 
-    CheckCircle2, 
+import {
+    Clock,
+    ArrowRight,
+    ArrowLeft,
+    CheckCircle2,
     AlertTriangle,
     Loader2
 } from 'lucide-react';
@@ -14,7 +14,7 @@ import {
 const QuizAttempt = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    
+
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const [started, setStarted] = useState(false);
@@ -98,7 +98,7 @@ const QuizAttempt = () => {
                 timeTaken,
                 isDisqualified
             });
-            
+
             if (isDisqualified) {
                 toast.error('DISQUALIFIED: Security violation detected (tab/app switch).', { duration: 5000 });
             }
@@ -113,7 +113,7 @@ const QuizAttempt = () => {
     const handleOptionSelect = (option) => {
         const newAnswers = [...answers];
         const existingIndex = newAnswers.findIndex(a => a.questionId === quiz.questions[currentQuestion]._id);
-        
+
         if (existingIndex > -1) {
             newAnswers[existingIndex].selectedAnswer = option;
         } else {
@@ -178,7 +178,7 @@ const QuizAttempt = () => {
                             </ul>
                         </div>
 
-                        <button 
+                        <button
                             onClick={() => setStarted(true)}
                             className="btn-blue w-full py-5 text-xl flex items-center justify-center space-x-3"
                         >
@@ -206,8 +206,8 @@ const QuizAttempt = () => {
                             {currentQuestion + 1} of {quiz.questions.length}
                         </div>
                         <div className="w-64 h-2 bg-slate-100 rounded-full overflow-hidden hidden lg:block">
-                            <div 
-                                className="h-full bg-blue-600 transition-all duration-700 rounded-full" 
+                            <div
+                                className="h-full bg-blue-600 transition-all duration-700 rounded-full"
                                 style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                             ></div>
                         </div>
@@ -231,18 +231,16 @@ const QuizAttempt = () => {
 
                     <div className="grid grid-cols-1 gap-5 flex-1">
                         {q.options.map((opt, idx) => (
-                            <div 
+                            <div
                                 key={idx}
                                 onClick={() => handleOptionSelect(opt)}
-                                className={`p-8 rounded-[2rem] border-2 cursor-pointer transition-all duration-300 flex items-center group ${
-                                    selectedOpt === opt 
-                                    ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-100 scale-[1.01]' 
-                                    : 'bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30'
-                                }`}
+                                className={`p-8 rounded-[2rem] border-2 cursor-pointer transition-all duration-300 flex items-center group ${selectedOpt === opt
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-100 scale-[1.01]'
+                                        : 'bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30'
+                                    }`}
                             >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black mr-6 shrink-0 transition-all ${
-                                    selectedOpt === opt ? 'bg-white/20 text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600'
-                                }`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black mr-6 shrink-0 transition-all ${selectedOpt === opt ? 'bg-white/20 text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600'
+                                    }`}>
                                     {String.fromCharCode(65 + idx)}
                                 </div>
                                 <span className="text-xl font-bold tracking-tight">{opt}</span>
@@ -261,13 +259,12 @@ const QuizAttempt = () => {
                             <button
                                 key={idx}
                                 onClick={() => setCurrentQuestion(idx)}
-                                className={`w-8 h-8 rounded-lg text-xs font-black transition-all ${
-                                    isCurrent 
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' 
-                                        : isAnswered 
-                                            ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
+                                className={`w-8 h-8 rounded-lg text-xs font-black transition-all ${isCurrent
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110'
+                                        : isAnswered
+                                            ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
                                             : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-                                }`}
+                                    }`}
                             >
                                 {idx + 1}
                             </button>
@@ -277,19 +274,18 @@ const QuizAttempt = () => {
 
                 {/* Footer Controls */}
                 <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                    <button 
+                    <button
                         onClick={() => setCurrentQuestion(prev => prev - 1)}
                         disabled={currentQuestion === 0}
-                        className={`flex items-center space-x-2 px-8 py-4 rounded-2xl font-black transition-all uppercase text-xs tracking-widest ${
-                            currentQuestion === 0 ? 'text-slate-200 cursor-not-allowed' : 'text-blue-600 hover:bg-blue-50'
-                        }`}
+                        className={`flex items-center space-x-2 px-8 py-4 rounded-2xl font-black transition-all uppercase text-xs tracking-widest ${currentQuestion === 0 ? 'text-slate-200 cursor-not-allowed' : 'text-blue-600 hover:bg-blue-50'
+                            }`}
                     >
                         <ArrowLeft size={18} />
                         <span>Back</span>
                     </button>
 
                     {currentQuestion === quiz.questions.length - 1 ? (
-                        <button 
+                        <button
                             onClick={() => handleSubmit(false)}
                             disabled={submitting || answers.length === 0}
                             className={`btn-blue px-12 py-4 text-xl flex items-center space-x-3 ${submitting ? 'opacity-50' : ''}`}
@@ -298,7 +294,7 @@ const QuizAttempt = () => {
                             <span>Finish Exam</span>
                         </button>
                     ) : (
-                        <button 
+                        <button
                             onClick={() => setCurrentQuestion(prev => prev + 1)}
                             className="btn-blue px-12 py-4 text-xl flex items-center space-x-3"
                         >

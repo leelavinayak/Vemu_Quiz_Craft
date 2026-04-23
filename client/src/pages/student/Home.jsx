@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { 
-    Clock, 
-    Play, 
-    CheckCircle, 
-    ArrowRight, 
-    Loader2, 
+import {
+    Clock,
+    Play,
+    CheckCircle,
+    ArrowRight,
+    Loader2,
     Calendar,
     Award
 } from 'lucide-react';
@@ -90,7 +90,7 @@ const StudentHome = () => {
                             </div>
 
                             {quiz.isAttempted ? (
-                                <button 
+                                <button
                                     onClick={() => navigate(`/result/${quiz.attemptId}`)}
                                     className="w-full flex items-center justify-center space-x-2 py-4 bg-slate-50 text-slate-700 font-black rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm group/btn"
                                 >
@@ -98,14 +98,13 @@ const StudentHome = () => {
                                     <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
                             ) : (
-                                <button 
+                                <button
                                     onClick={() => navigate(`/quiz/${quiz._id}`)}
                                     disabled={quiz.scheduledAt && new Date(quiz.scheduledAt) > new Date()}
-                                    className={`w-full flex items-center justify-center space-x-2 py-4 rounded-2xl font-black transition-all shadow-lg ${
-                                        quiz.scheduledAt && new Date(quiz.scheduledAt) > new Date() 
-                                        ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none' 
-                                        : 'btn-blue'
-                                    }`}
+                                    className={`w-full flex items-center justify-center space-x-2 py-4 rounded-2xl font-black transition-all shadow-lg ${quiz.scheduledAt && new Date(quiz.scheduledAt) > new Date()
+                                            ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                                            : 'btn-blue'
+                                        }`}
                                 >
                                     <span>Start Quiz</span>
                                     <Play size={18} fill="currentColor" />

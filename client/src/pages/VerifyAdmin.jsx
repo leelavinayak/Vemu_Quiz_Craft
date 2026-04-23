@@ -42,8 +42,8 @@ const VerifyAdmin = () => {
 
                     <div className="max-w-md">
                         <h2 className="text-6xl font-black text-white leading-tight mb-6 animate-slide-right">
-                            Finalize Your <br/>
-                            <span className="text-indigo-300">Administrative</span> <br/>
+                            Finalize Your <br />
+                            <span className="text-indigo-300">Administrative</span> <br />
                             Access.
                         </h2>
                         <p className="text-lg text-indigo-100/70 font-medium leading-relaxed">
@@ -59,13 +59,13 @@ const VerifyAdmin = () => {
 
             {/* Right Side: Verification Form */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 relative">
-                 <div className="w-full max-w-md animate-fade-in">
+                <div className="w-full max-w-md animate-fade-in">
                     <div className="flex flex-col items-center mb-10">
                         <div className="bg-slate-900 p-5 rounded-3xl mb-8 shadow-2xl shadow-slate-200 rotate-6 hover:rotate-0 transition-transform duration-500">
                             <ShieldAlert className="text-white w-10 h-10" />
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-3">Security Check</h1>
-                        <p className="text-slate-500 font-medium text-center">Verify the 6-digit code sent to: <br/><span className="text-blue-600 font-black">{email}</span></p>
+                        <p className="text-slate-500 font-medium text-center">Verify the 6-digit code sent to: <br /><span className="text-blue-600 font-black">{email}</span></p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8">
@@ -94,7 +94,7 @@ const VerifyAdmin = () => {
                                 </>
                             )}
                         </button>
-                        
+
                         <div className="flex items-center justify-center space-x-2 text-slate-400 text-[10px] font-black uppercase tracking-widest">
                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
                             <span>Multi-Factor Authentication Active</span>

@@ -170,6 +170,14 @@ const getResultDetail = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
+        // Ensure questions have _id for frontend compatibility
+        if (mappedResult.quizId && mappedResult.quizId.questions) {
+            mappedResult.quizId.questions = mappedResult.quizId.questions.map((q, idx) => ({
+                ...q,
+                _id: q._id || q.id || idx.toString()
+            }));
+        }
+
         res.json(mappedResult);
     } catch (error) {
         res.status(500).json({ message: error.message });

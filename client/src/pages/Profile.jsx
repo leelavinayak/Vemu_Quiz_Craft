@@ -14,6 +14,7 @@ const Profile = () => {
         collegeId: user.collegeId || '',
         branch: user.branch || '',
         year: user.year || '',
+        section: user.section || '',
         collegeName: user.collegeName || ''
     });
     const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ const Profile = () => {
             collegeId: user.collegeId || '',
             branch: user.branch || '',
             year: user.year || '',
+            section: user.section || '',
             collegeName: user.collegeName || ''
         });
         setIsEditing(false);
@@ -47,10 +49,9 @@ const Profile = () => {
     };
 
     const inputClass = (disabled) =>
-        `w-full px-4 py-3 rounded-xl border font-medium text-slate-700 text-base outline-none transition-all duration-200 ${
-            disabled
-                ? 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+        `w-full px-4 py-3 rounded-xl border font-medium text-slate-700 text-base outline-none transition-all duration-200 ${disabled
+            ? 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
+            : 'bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
         }`;
 
     return (
@@ -180,11 +181,10 @@ const Profile = () => {
                                     disabled={!isEditing}
                                 >
                                     <option value="">Select Year</option>
-                                    <option value="1st Year">1st Year</option>
-                                    <option value="2nd Year">2nd Year</option>
-                                    <option value="3rd Year">3rd Year</option>
-                                    <option value="4th Year">4th Year</option>
-                                    <option value="Associate">Associate / Other</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
                                 </select>
                             </div>
                         )}
@@ -201,19 +201,50 @@ const Profile = () => {
                             />
                         </div>
 
-                        <div className={user.role !== 'admin' ? 'md:col-span-2' : ''}>
+                        <div className={user.role !== 'admin' ? '' : 'md:col-span-2'}>
                             <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
                                 {user.role === 'admin' ? 'Department' : 'Branch'}
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 className={inputClass(!isEditing)}
                                 value={formData.branch}
                                 onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                                placeholder={user.role === 'admin' ? 'e.g. IT Department' : 'e.g. Computer Science'}
                                 disabled={!isEditing}
-                            />
+                            >
+                                <option value="">Select Branch</option>
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                                <option value="EEE">EEE</option>
+                                <option value="MECH">MECH</option>
+                                <option value="CIVIL">CIVIL</option>
+                                <option value="IT">IT</option>
+                                <option value="AIML">AIML</option>
+                                <option value="AI">AI</option>
+                                <option value="AIDS">AIDS</option>
+                            </select>
                         </div>
+
+                        {user.role !== 'admin' && (
+                            <div>
+                                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Section</label>
+                                <select
+                                    className={inputClass(!isEditing)}
+                                    value={formData.section}
+                                    onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                                    disabled={!isEditing}
+                                >
+                                    <option value="">Select Section</option>
+                                    <option value="A">Section A</option>
+                                    <option value="B">Section B</option>
+                                    <option value="C">Section C</option>
+                                    <option value="D">Section D</option>
+                                    <option value="E">Section E</option>
+                                    <option value="F">Section F</option>
+                                    <option value="G">Section G</option>
+                                    <option value="H">Section H</option>
+                                </select>
+                            </div>
+                        )}
 
                     </div>
 

@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { 
-    Bell, 
-    CheckCircle2, 
-    AlertCircle, 
-    Info, 
-    Clock, 
+import {
+    Bell,
+    CheckCircle2,
+    AlertCircle,
+    Info,
+    Clock,
     Trash2,
     Loader2,
     CheckCheck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     useEffect(() => {
         fetchNotifications();
@@ -34,7 +36,7 @@ const Notifications = () => {
     const markRead = async (id) => {
         try {
             await api.put(`/notifications/${id}/read`);
-            setNotifications(notifications.map(n => 
+            setNotifications(notifications.map(n =>
                 n._id === id ? { ...n, isRead: true } : n
             ));
         } catch (err) {
@@ -54,7 +56,7 @@ const Notifications = () => {
     };
 
     const handleDelete = async (e, id) => {
-        e.stopPropagation(); // Prevent marking as read when clicking delete
+        e.stopPropagation();
         try {
             await api.delete(`/notifications/${id}`);
             setNotifications(notifications.filter(n => n._id !== id));
@@ -65,7 +67,6 @@ const Notifications = () => {
     };
 
     const handleClearAll = async () => {
-        if (!window.confirm('Are you sure you want to clear all notifications? This cannot be undone.')) return;
         try {
             await api.delete('/notifications/clear');
             setNotifications([]);
@@ -97,6 +98,14 @@ const Notifications = () => {
 
     return (
         <div className="max-w-4xl mx-auto px-6 pt-16 pb-20 page-enter">
+            <ConfirmModal 
+                isOpen={isConfirmOpen}
+                onClose={() => setIsConfirmOpen(false)}
+                onConfirm={handleClearAll}
+                title="Clear Notification History"
+                message="Are you sure you want to permanently clear all notifications? This action cannot be reversed."
+                confirmText="Clear All"
+            />
             <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
                 <div>
                     <h1 className="text-5xl font-black text-slate-800 tracking-tight">Updates Center</h1>
@@ -104,8 +113,8 @@ const Notifications = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     {notifications.length > 0 && (
-                        <button 
-                            onClick={handleClearAll}
+                        <button
+                            onClick={() => setIsConfirmOpen(true)}
                             className="flex items-center space-x-2 bg-red-50 text-red-600 px-4 py-2 rounded-2xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-xs font-black uppercase tracking-widest"
                         >
                             <Trash2 size={16} />
@@ -113,7 +122,7 @@ const Notifications = () => {
                         </button>
                     )}
                     {unreadCount > 0 && (
-                        <button 
+                        <button
                             onClick={markAllRead}
                             className="flex items-center space-x-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-2xl border border-blue-100 hover:bg-blue-600 hover:text-white transition-all text-xs font-black uppercase tracking-widest"
                         >
@@ -129,14 +138,13 @@ const Notifications = () => {
 
             <div className="space-y-4 stagger-children">
                 {notifications.map((n) => (
-                    <div 
+                    <div
                         key={n._id}
                         onClick={() => !n.isRead && markRead(n._id)}
-                        className={`p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer flex items-center justify-between group animate-fade-in ${
-                            n.isRead 
-                            ? 'bg-white border-slate-100 opacity-60 hover:opacity-80' 
-                            : 'bg-blue-50/30 border-blue-100 shadow-sm hover:shadow-md hover:shadow-blue-50'
-                        }`}
+                        className={`p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer flex items-center justify-between group animate-fade-in ${n.isRead
+                                ? 'bg-white border-slate-100 opacity-60 hover:opacity-80'
+                                : 'bg-blue-50/30 border-blue-100 shadow-sm hover:shadow-md hover:shadow-blue-50'
+                            }`}
                     >
                         <div className="flex items-center space-x-5">
                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${n.isRead ? 'bg-slate-100' : 'bg-white shadow-sm'}`}>
@@ -156,7 +164,7 @@ const Notifications = () => {
                             {!n.isRead && (
                                 <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse mr-2"></div>
                             )}
-                            <button 
+                            <button
                                 onClick={(e) => handleDelete(e, n._id)}
                                 className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
                                 title="Delete notification"

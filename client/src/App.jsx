@@ -13,6 +13,7 @@ import AddQuiz from './pages/admin/AddQuiz';
 import AttemptReview from './pages/admin/AttemptReview';
 import StudentDetail from './pages/admin/StudentDetail';
 import QuizLeaderboard from './pages/admin/QuizLeaderboard';
+import QuizReports from './pages/admin/QuizReports';
 
 // Student Pages
 import StudentHome from './pages/student/Home';
@@ -84,6 +85,11 @@ function App() {
         <Route path="/admin/quiz/:id/leaderboard" element={
           <ProtectedRoute role="admin">
             <QuizLeaderboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/reports" element={
+          <ProtectedRoute role="admin">
+            <QuizReports />
           </ProtectedRoute>
         } />
 

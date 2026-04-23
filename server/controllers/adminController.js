@@ -110,11 +110,21 @@ const getAllStudents = async (req, res) => {
 // @desc    Delete student
 const deleteStudent = async (req, res) => {
     try {
-        const { error: attemptError } = await supabase.from('quiz_attempts').delete().eq('studentId', req.params.id);
-        const { error: userError } = await supabase.from('users').delete().eq('id', req.params.id);
+        const studentId = req.params.id;
+
+        // 1. Delete associated data (attempts and notifications)
+        await supabase.from('quiz_attempts').delete().eq('studentId', studentId);
+        await supabase.from('notifications').delete().eq('userId', studentId);
+
+        // 2. Delete the user record
+        const { error: userError } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', studentId);
 
         if (userError) throw userError;
-        res.json({ message: 'User and all associated data deleted' });
+
+        res.json({ message: 'Student and all associated data purged successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -156,7 +166,8 @@ const updateStudent = async (req, res) => {
             collegeId: req.body.collegeId,
             collegeName: req.body.collegeName,
             branch: req.body.branch,
-            year: req.body.year
+            year: req.body.year,
+            section: req.body.section
         };
 
         const { data: updatedStudent, error } = await supabase
@@ -189,14 +200,15 @@ const getStudentDetail = async (req, res) => {
         const history = historyRaw?.map(h => ({
             ...h,
             _id: h.id,
-            quizId: h.quiz ? { ...h.quiz, _id: h.quiz.id } : null
+            percentage: h.percentage || 0,
+            status: h.status || 'fail',
+            quizId: h.quiz ? { ...h.quiz, _id: h.quiz.id } : { title: 'Deleted Quiz', _id: null }
         })) || [];
 
-        const totalAttempts = history ? history.length : 0;
-        const avgScore = totalAttempts > 0
-            ? history.reduce((acc, curr) => acc + curr.percentage, 0) / totalAttempts
-            : 0;
-        const passRank = history ? history.filter(h => h.status === 'pass').length : 0;
+        const totalAttempts = history.length;
+        const totalScore = history.reduce((acc, curr) => acc + (Number(curr.percentage) || 0), 0);
+        const avgScore = totalAttempts > 0 ? totalScore / totalAttempts : 0;
+        const passRank = history.filter(h => h.status === 'pass').length;
 
         res.json({
             student,

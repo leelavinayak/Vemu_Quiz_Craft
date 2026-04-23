@@ -240,4 +240,72 @@ const generateQuizQuestions = async (language, numQuestions, difficulty = 'mediu
   return generateMockQuestions(language, numQuestions, difficulty);
 };
 
-module.exports = { generateQuizQuestions };
+/**
+ * Extracts quiz questions from provided text using Google Gemini.
+ */
+const extractQuestionsFromText = async (rawText, numQuestions = 10) => {
+    const apiKey = (process.env.GEMINI_API_KEY || '').trim();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    // Use stable models that are less likely to hit experimental limits
+    const models = ["gemini-1.5-flash", "gemini-1.5-pro"];
+
+    const prompt = `
+    You are an expert educational content analyzer. I am providing you with raw text extracted from a document that contains educational material, questions, and answers.
+    
+    TASK:
+    1. Analyze the text provided below.
+    2. Extract or generate ${numQuestions} high-quality multiple choice questions based strictly on the content.
+    3. Ensure each question has exactly one correct answer and 3 plausible distractors.
+    4. Return a raw JSON array of objects. Each object MUST have: "question", "options" (array of 4 strings), and "correctAnswer" (matching one of the options).
+    
+    RAW TEXT SOURCE:
+    ---
+    ${rawText}
+    ---
+    
+    STRICT CONSTRAINTS:
+    - OUTPUT MUST BE A VALID JSON ARRAY ONLY.
+    - NO EXPLANATIONS, NO MARKDOWN, NO PREAMBLE.
+    - EVERY QUESTION MUST HAVE 4 OPTIONS AND 1 CORRECT ANSWER.
+    `;
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
+    for (const currentModelName of models) {
+        try {
+            console.log(`[Extraction] Analyzing text using ${currentModelName}...`);
+            if (!apiKey) throw new Error('GEMINI_API_KEY missing');
+
+            const model = genAI.getGenerativeModel({ model: currentModelName });
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            let text = response.text().trim();
+            
+            if (text.includes('```')) {
+                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            }
+
+            let parsedData;
+            try {
+                parsedData = JSON.parse(text);
+            } catch (e) {
+                const jsonMatch = text.match(/\[[\s\S]*\]/);
+                if (jsonMatch) parsedData = JSON.parse(jsonMatch[0]);
+                else throw e;
+            }
+
+            if (!Array.isArray(parsedData)) throw new Error('Invalid format');
+            return parsedData;
+        } catch (error) {
+            console.warn(`Extraction attempt with ${currentModelName} failed: ${error.message}`);
+            await sleep(1000);
+        }
+    }
+    
+    console.warn('!!! FAILOVER: Extraction AI Service unavailable. Using Mock Generator !!!');
+    // For mock, we'll just use the first few words of the text as the "topic"
+    const mockTopic = rawText.substring(0, 50).replace(/\n/g, ' ') + '...';
+    return generateMockQuestions(mockTopic, numQuestions, 'medium');
+};
+
+module.exports = { generateQuizQuestions, extractQuestionsFromText };

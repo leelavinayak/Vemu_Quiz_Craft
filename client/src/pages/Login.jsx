@@ -48,16 +48,19 @@ const Login = () => {
 
             <div className="w-full max-w-md relative z-10">
                 {/* Branding */}
-                <div className="flex flex-col items-center mb-10 animate-fade-in">
+                <div className="flex flex-col items-center mb-10 animate-fade-in text-center">
                     <div className="bg-blue-600 p-4 rounded-2xl shadow-xl shadow-blue-100 mb-4 rotate-3">
                         <Sparkles className="text-white" size={32} />
                     </div>
-                    <span className="text-3xl font-black text-slate-800 tracking-tight">Quiz<span className="text-blue-600">Craft</span></span>
+                    <span className="text-xl md:text-3xl font-black text-slate-800 tracking-tight flex flex-col md:flex-row md:items-center leading-tight">
+                        <span>Weekly</span>
+                        <span className="text-blue-600 md:ml-2">Aptitude Test</span>
+                    </span>
                 </div>
 
-                <div className="bg-white p-10 md:p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100 animate-scale-up">
+                <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100 animate-scale-up">
                     <div className="mb-10 text-center">
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Welcome Back</h1>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-2">Welcome Back</h1>
                         <p className="text-slate-500 font-medium text-sm">Secure access to your intelligence portal.</p>
                     </div>
 
@@ -68,7 +71,7 @@ const Login = () => {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Email</label>
                             <div className="relative group">
@@ -78,8 +81,9 @@ const Login = () => {
                                 <input
                                     type="email"
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700 placeholder:text-slate-300"
-                                    placeholder="210M1A0537@vemu.org"
+                                    autoComplete="username"
+                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700 placeholder:text-slate-200"
+                                    placeholder="your-email@vemu.org"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -89,8 +93,8 @@ const Login = () => {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center px-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Access Key</label>
-                                <Link 
-                                    to="/forgot-password" 
+                                <Link
+                                    to="/forgot-password"
                                     className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors"
                                 >
                                     Recovery

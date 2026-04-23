@@ -54,7 +54,7 @@ const Footer = () => {
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-20">
                     {/* Segment 1: Brand Section */}
                     <div className="space-y-8">
                         <div className="flex items-center space-x-3 group cursor-default">
@@ -62,12 +62,74 @@ const Footer = () => {
                                 <Sparkles className="text-white" size={24} />
                             </div>
                             <span className="text-3xl font-black text-white tracking-tighter">
-                                Quiz<span className="text-blue-500">Craft</span>
+                                Weekly <span className="text-blue-500">Aptitude Test</span>
                             </span>
                         </div>
                         <p className="text-slate-400 font-medium text-base leading-relaxed max-w-xs">
-                            Architecting the future of academic assessment through AI-driven intelligence and secure protocols.
+                           Boost your aptitude skills with weekly challenges designed to improve speed, accuracy, and problem-solving for placements.
                         </p>
+                    </div>
+
+                    {/* Segment 2: About Vemu IT (College Details) */}
+                    <div className="space-y-8">
+                        <h4 className="text-white font-black uppercase tracking-[0.25em] text-xs pb-2 border-b-2 border-blue-600 w-fit">About Vemu IT</h4>
+                        <div className="space-y-6">
+                            <p className="text-slate-400 text-sm font-semibold leading-relaxed">
+                                Vemu Institute of Technology is a premier academic entity in Chittoor, committed to engineering excellence and technological innovation.
+                            </p>
+                            <div className="space-y-4">
+                                <div className="flex items-start space-x-3 group">
+                                    <MapPin size={16} className="text-blue-500 mt-1 shrink-0" />
+                                    <p className="text-slate-500 text-xs font-bold">P. Kothakota, Chittoor, AP - 517112</p>
+                                </div>
+                                <div className="flex items-center space-x-3 group">
+                                    <Phone size={16} className="text-blue-500 shrink-0" />
+                                    <p className="text-slate-500 text-xs font-bold">+91 8886661148</p>
+                                </div>
+                                <div className="flex items-center space-x-3 group">
+                                    <Mail size={16} className="text-blue-500 shrink-0" />
+                                    <p className="text-slate-500 text-xs font-bold">vemupat@gmail.com</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <a href="https://instagram.com/vemuitchittoor" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="Instagram">
+                                    <InstagramIcon size={22} className="group-hover:scale-110 transition-transform" />
+                                </a>
+                                <a href="#" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="LinkedIn">
+                                    <LinkedInIcon size={22} className="group-hover:scale-110 transition-transform" />
+                                </a>
+                                <a href="https://vemu.org" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="Website">
+                                    <Globe size={22} className="group-hover:scale-110 transition-transform" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Segment 3: Programmers Club Details */}
+                    <div className="space-y-8">
+                        <h4 className="text-white font-black uppercase tracking-[0.25em] text-xs pb-2 border-b-2 border-blue-600 w-fit">Programmers Club</h4>
+                        <div className="space-y-6">
+                            <p className="text-slate-400 text-sm font-semibold leading-relaxed">
+                                A dynamic student-led ecosystem fostering digital innovation, software mastery, and competitive excellence at Vemu IT.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20">
+                                    Carrier Development Center
+                                </span>
+                                {/* <span className="text-[9px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">
+                                    Carrier Development Center
+                                </span> */}
+                            </div>
+                            <a
+                                href="https://programmers-club.onrender.com/"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center space-x-2 text-blue-500 hover:text-blue-400 font-black text-[10px] uppercase tracking-widest group"
+                            >
+                                <span>Visit Hub</span>
+                                <ExternalLink size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                            </a>
+                        </div>
                         <div className="flex items-center space-x-4">
                             <a href="https://instagram.com/vemuitchittoor" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="Instagram">
                                 <InstagramIcon size={22} className="group-hover:scale-110 transition-transform" />
@@ -75,13 +137,13 @@ const Footer = () => {
                             <a href="#" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="LinkedIn">
                                 <LinkedInIcon size={22} className="group-hover:scale-110 transition-transform" />
                             </a>
-                            <a href="https://vemu.org" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="Website">
+                            {/* <a href="https://vemu.org" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 border border-white/5 hover:border-blue-400/30 group" title="Website">
                                 <Globe size={22} className="group-hover:scale-110 transition-transform" />
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 
-                    {/* Segment 2: Ecosystem (Platform Links) - Swapped to 2nd position */}
+                    {/* Segment 4: Global Ecosystem
                     <div className="space-y-8">
                         <h4 className="text-white font-black uppercase tracking-[0.25em] text-xs pb-2 border-b-2 border-blue-600 w-fit">Ecosystem</h4>
                         <ul className="space-y-4">
@@ -94,85 +156,15 @@ const Footer = () => {
                                 </li>
                             ))}
                         </ul>
-                    </div>
-
-                    {/* Segment 3: Institutional Profile - Swapped to 3rd position */}
-                    <div className="space-y-8">
-                        <h4 className="text-white font-black uppercase tracking-[0.25em] text-xs pb-2 border-b-2 border-blue-600 w-fit">Our Institution</h4>
-                        <div className="space-y-6">
-                            <div className="flex items-start space-x-4 group">
-                                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
-                                    <MapPin size={18} />
-                                </div>
-                                <p className="text-slate-400 text-sm font-semibold leading-relaxed">
-                                    Vemu Institute of Technology<br />
-                                    <span className="text-slate-500 font-medium">P. Kothakota, Chittoor, AP - 517112</span>
-                                </p>
-                            </div>
-                            <div className="flex items-center space-x-4 group">
-                                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
-                                    <Phone size={18} />
-                                </div>
-                                <p className="text-slate-400 text-sm font-semibold group-hover:text-slate-200 transition-colors">+91 8886661148 / 49</p>
-                            </div>
-                            <div className="flex items-center space-x-4 group">
-                                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
-                                    <Mail size={18} />
-                                </div>
-                                <p className="text-slate-400 text-sm font-semibold group-hover:text-slate-200 transition-colors">vemupat@gmail.com</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Segment 4: Team Credits (Programmers Club) - Width 300px */}
-                    <div className="flex justify-start lg:justify-end">
-                        <div className="relative group w-[300px]">
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
-                            <div className="relative space-y-6 p-8 bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] border border-white/5 hover:border-white/10 transition-colors">
-                                <div className="flex items-center space-x-3 mb-2">
-                                    <div className="bg-blue-600/20 p-2 rounded-xl">
-                                        <Code2 className="text-blue-500" size={24} />
-                                    </div>
-                                    <h4 className="text-white font-black uppercase tracking-[0.2em] text-xs">Programmers Club</h4>
-                                </div>
-                                <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20">
-                                    Innovation Hub
-                                </span>
-                                <p className="text-slate-400 text-xs font-bold leading-relaxed">
-                                    Curating software innovation and digital excellence through student-led initiatives at Vemu IT.
-                                </p>
-                                <div className="pt-4 space-y-5">
-                                    <a
-                                        href="https://programmers-club.onrender.com/"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="flex items-center justify-center space-x-3 w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] transition-all transform hover:-translate-y-1 shadow-xl shadow-blue-900/40 group/btn"
-                                    >
-                                        <ExternalLink size={16} className="group-hover/btn:rotate-12 transition-transform" />
-                                        <span>Visit Website</span>
-                                    </a>
-                                    <div className="flex items-center justify-between border-t border-white/5 pt-5">
-                                        <div className="flex items-center space-x-3">
-                                            <a href="#" target="_blank" rel="noreferrer" className="p-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-blue-500 hover:bg-white/10 transition-all transform hover:scale-110">
-                                                <InstagramIcon size={18} />
-                                            </a>
-                                            <a href="https://www.linkedin.com/in/programmers-club-1929b3403" target="_blank" rel="noreferrer" className="p-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-blue-500 hover:bg-white/10 transition-all transform hover:scale-110">
-                                                <LinkedInIcon size={18} />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="flex items-center space-x-4">
-                        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest leading-relaxed">
+                <div className="pt-12 border-t border-white/5 flex flex-col items-center justify-center gap-8">
+                    <div className="flex items-center justify-center">
+                        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest leading-relaxed text-center">
                             © 2026 Developed by Programmers Club, Vemu Institute Of Technology
-                            {/* © 2026 QuizCraft Enterprise. All internal protocols active. */}
+                            {/* © 2026 Weekly Aptitude Test Enterprise. All internal protocols active. */}
                         </p>
                     </div>
                     {/* <div className="flex items-center space-x-8">

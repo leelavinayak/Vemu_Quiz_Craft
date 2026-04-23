@@ -10,7 +10,8 @@ import {
     CheckCircle2,
     Loader2,
     ChevronLeft,
-    AlertCircle
+    AlertCircle,
+    Pencil
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -20,6 +21,7 @@ import toast from 'react-hot-toast';
 const AddQuiz = () => {
     const [step, setStep] = useState(1); // 1: Setup, 2: Review, 3: Publish
     const [loading, setLoading] = useState(false);
+    const [loadingStatus, setLoadingStatus] = useState('');
     const [quizData, setQuizData] = useState({
         title: '',
         language: '',
@@ -29,9 +31,87 @@ const AddQuiz = () => {
         duration: 30,
         scheduledAt: '',
         endTime: '',
-        expiryHours: 24 // Default to 24 hours
+        expiryHours: 24, // Default to 24 hours
+        targetYears: [], // e.g. ['1', '2']
+        targetBranches: [], // e.g. ['CSE', 'ECE']
+        targetSections: [] // e.g. ['A', 'B']
     });
+
+    // Editor States
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [editingIndex, setEditingIndex] = useState(-1);
+    const [tempQuestion, setTempQuestion] = useState({
+        question: '',
+        options: ['', '', '', ''],
+        correctAnswer: ''
+    });
+
+    const openEditor = (index = -1) => {
+        if (index === -1) {
+            setTempQuestion({
+                question: '',
+                options: ['', '', '', ''],
+                correctAnswer: ''
+            });
+            setEditingIndex(-1);
+        } else {
+            setTempQuestion({ ...quizData.questions[index] });
+            setEditingIndex(index);
+        }
+        setIsEditorOpen(true);
+    };
+
+    const saveQuestion = () => {
+        if (!tempQuestion.question || tempQuestion.options.some(o => !o) || !tempQuestion.correctAnswer) {
+            toast.error('Please fill all fields and select the correct answer');
+            return;
+        }
+
+        const newQuestions = [...quizData.questions];
+        if (editingIndex === -1) {
+            newQuestions.push(tempQuestion);
+        } else {
+            newQuestions[editingIndex] = tempQuestion;
+        }
+
+        setQuizData({ ...quizData, questions: newQuestions });
+        setIsEditorOpen(false);
+        toast.success(editingIndex === -1 ? 'Question Added' : 'Question Updated');
+    };
+
     const navigate = useNavigate();
+    const [creationMode, setCreationMode] = useState('ai'); // 'ai' or 'pdf'
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleAnalyzePDF = async () => {
+        if (!selectedFile || !quizData.title) {
+            toast.error('Please provide a title and a PDF file');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('pdf', selectedFile);
+        formData.append('numQuestions', quizData.numQuestions);
+        formData.append('title', quizData.title);
+
+        setLoading(true);
+        setLoadingStatus('Uploading & reading PDF...');
+        try {
+            const { data } = await api.post('/admin/quiz/analyze-pdf', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setLoadingStatus('AI is extracting questions...');
+            setQuizData({ ...quizData, questions: data });
+            setStep(2);
+            toast.success('PDF Analyzed Successfully!');
+        } catch (err) {
+            console.error('PDF Analysis Error:', err);
+            toast.error(err.response?.data?.message || 'Failed to analyze PDF');
+        } finally {
+            setLoading(false);
+            setLoadingStatus('');
+        }
+    };
 
     const handleGenerate = async () => {
         if (!quizData.title || !quizData.language) {
@@ -39,6 +119,7 @@ const AddQuiz = () => {
             return;
         }
         setLoading(true);
+        setLoadingStatus('AI is generating questions...');
         try {
             const { data } = await api.post('/admin/quiz/generate', {
                 language: quizData.language,
@@ -53,6 +134,7 @@ const AddQuiz = () => {
             toast.error(`Generation Failed: ${errorMsg}`);
         } finally {
             setLoading(false);
+            setLoadingStatus('');
         }
     };
 
@@ -80,7 +162,10 @@ const AddQuiz = () => {
             await api.post('/admin/quiz/upload', {
                 ...quizData,
                 scheduledAt: finalScheduledAt,
-                endTime: finalEndTime
+                endTime: finalEndTime,
+                targetYears: quizData.targetYears,
+                targetBranches: quizData.targetBranches,
+                targetSections: quizData.targetSections
             });
             toast.success('Quiz Published successfully!');
             navigate('/admin/dashboard');
@@ -199,93 +284,234 @@ const AddQuiz = () => {
 
                     {/* Step 1: Setup */}
                     {step === 1 && (
-                        <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm animate-scale-up">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="md:col-span-2">
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Quiz Title</label>
-                                    <input
-                                        type="text"
-                                        className="input-field"
-                                        placeholder="e.g. Master React Hooks"
-                                        value={quizData.title}
-                                        onChange={(e) => setQuizData({ ...quizData, title: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Core Topic / Language</label>
-                                    <input
-                                        type="text"
-                                        className="input-field"
-                                        placeholder="e.g. Machine Learning, Ancient History, etc."
-                                        value={quizData.language}
-                                        onChange={(e) => setQuizData({ ...quizData, language: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Total Questions</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={quizData.numQuestions}
-                                        onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Passing Mark (%)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={quizData.passingScore}
-                                        onChange={(e) => setQuizData({ ...quizData, passingScore: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Timer (Minutes)</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        value={quizData.duration}
-                                        onChange={(e) => setQuizData({ ...quizData, duration: e.target.value })}
-                                    />
+                        <div className="space-y-8 animate-scale-up">
+                            {/* Mode Selection */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <button
+                                    onClick={() => setCreationMode('ai')}
+                                    className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center ${creationMode === 'ai' ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-100' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                                >
+                                    <Sparkles size={32} className={creationMode === 'ai' ? 'text-white' : 'text-blue-600'} />
+                                    <span className="font-black uppercase tracking-widest text-xs mt-3">AI Topic Generator</span>
+                                </button>
+                                <button
+                                    onClick={() => setCreationMode('pdf')}
+                                    className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center ${creationMode === 'pdf' ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-200' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                                >
+                                    <Upload size={32} className={creationMode === 'pdf' ? 'text-white' : 'text-slate-900'} />
+                                    <span className="font-black uppercase tracking-widest text-xs mt-3">PDF Source Extractor</span>
+                                </button>
+                            </div>
+
+                            <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                                {/* Eligibility Targeting */}
+                            <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm space-y-10">
+                                <div className="flex items-center space-x-4 mb-2">
+                                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                                        <Plus size={24} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black text-slate-800 tracking-tight">Student Eligibility</h3>
+                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Select which students can attend</p>
+                                    </div>
                                 </div>
 
-                                {/* Difficulty Level */}
-                                <div className="md:col-span-2">
-                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">Difficulty Level</label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                        {[
-                                            { value: 'easy',   label: 'Easy',   emoji: '🟢', desc: 'Basic concepts' },
-                                            { value: 'medium', label: 'Medium', emoji: '🟡', desc: 'Intermediate' },
-                                            { value: 'hard',   label: 'Hard',   emoji: '🔴', desc: 'Advanced' },
-                                            { value: 'mixed',  label: 'Mixed',  emoji: '🎯', desc: 'All levels' },
-                                        ].map(({ value, label, emoji, desc }) => (
-                                            <button
-                                                key={value}
-                                                type="button"
-                                                onClick={() => setQuizData({ ...quizData, difficulty: value })}
-                                                className={`flex flex-col items-center justify-center py-4 px-3 rounded-2xl border-2 font-bold transition-all duration-200 ${
-                                                    quizData.difficulty === value
-                                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200'
-                                                        : 'bg-slate-50 border-slate-100 text-slate-500 hover:border-blue-200 hover:bg-blue-50'
-                                                }`}
-                                            >
-                                                <span className="text-2xl mb-1">{emoji}</span>
-                                                <span className="font-black uppercase tracking-widest text-[11px]">{label}</span>
-                                                <span className={`text-[10px] mt-0.5 ${quizData.difficulty === value ? 'text-blue-100' : 'text-slate-400'}`}>{desc}</span>
-                                            </button>
-                                        ))}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                                    {/* Years */}
+                                    <div className="space-y-4">
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Years</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['1', '2', '3', '4'].map(year => (
+                                                <button
+                                                    key={year}
+                                                    onClick={() => {
+                                                        const current = quizData.targetYears;
+                                                        const next = current.includes(year) ? current.filter(y => y !== year) : [...current, year];
+                                                        setQuizData({ ...quizData, targetYears: next });
+                                                    }}
+                                                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all border-2 ${quizData.targetYears.includes(year) ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                                                >
+                                                    {year}{year === '1' ? 'st' : year === '2' ? 'nd' : year === '3' ? 'rd' : 'th'} Year
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
+
+                                    {/* Branches */}
+                                    <div className="space-y-4">
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Branches</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AIML', 'AI', 'AIDS'].map(branch => (
+                                                <button
+                                                    key={branch}
+                                                    onClick={() => {
+                                                        const current = quizData.targetBranches;
+                                                        const next = current.includes(branch) ? current.filter(b => b !== branch) : [...current, branch];
+                                                        setQuizData({ ...quizData, targetBranches: next });
+                                                    }}
+                                                    className={`px-3 py-2 rounded-xl text-[10px] font-black transition-all border-2 ${quizData.targetBranches.includes(branch) ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                                                >
+                                                    {branch}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Sections */}
+                                    <div className="space-y-4">
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Sections</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map(section => (
+                                                <button
+                                                    key={section}
+                                                    onClick={() => {
+                                                        const current = quizData.targetSections;
+                                                        const next = current.includes(section) ? current.filter(s => s !== section) : [...current, section];
+                                                        setQuizData({ ...quizData, targetSections: next });
+                                                    }}
+                                                    className={`w-10 h-10 rounded-xl text-xs font-black transition-all border-2 flex items-center justify-center ${quizData.targetSections.includes(section) ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                                                >
+                                                    {section}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100 flex items-start space-x-3">
+                                    <AlertCircle size={18} className="text-blue-500 mt-0.5" />
+                                    <p className="text-[11px] text-blue-700 font-medium leading-relaxed">
+                                        If no selections are made for a category, the quiz will be available to <span className="font-black">ALL students</span> in that category by default.
+                                    </p>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={handleGenerate}
-                                disabled={loading}
-                                className="btn-blue w-full mt-10 flex items-center justify-center space-x-3 py-5 text-xl"
-                            >
-                                {loading ? <Loader2 className="animate-spin" /> : <Sparkles size={24} />}
-                                <span>Generate with AI</span>
-                            </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Quiz Title</label>
+                                        <input
+                                            type="text"
+                                            className="input-field"
+                                            placeholder="e.g. Weekly Aptitude Test - Set A"
+                                            value={quizData.title}
+                                            onChange={(e) => setQuizData({ ...quizData, title: e.target.value })}
+                                        />
+                                    </div>
+                                    
+                                    {creationMode === 'ai' ? (
+                                        <div>
+                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Core Topic / Language</label>
+                                            <input
+                                                type="text"
+                                                className="input-field"
+                                                placeholder="e.g. Python Programming, AWS Cloud, etc."
+                                                value={quizData.language}
+                                                onChange={(e) => setQuizData({ ...quizData, language: e.target.value })}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Upload PDF Source</label>
+                                            <div className="relative">
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf"
+                                                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                                                    className="absolute opacity-0 -z-10"
+                                                    id="pdf-upload"
+                                                />
+                                                <label 
+                                                    htmlFor="pdf-upload"
+                                                    className="flex items-center justify-between input-field cursor-pointer hover:border-blue-400 transition-colors"
+                                                >
+                                                    <span className="truncate">{selectedFile ? selectedFile.name : 'Select PDF File...'}</span>
+                                                    <Upload size={18} className="text-slate-400" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Total Questions</label>
+                                        <input
+                                            type="number"
+                                            className="input-field"
+                                            value={quizData.numQuestions}
+                                            onChange={(e) => setQuizData({ ...quizData, numQuestions: e.target.value })}
+                                        />
+                                    </div>
+
+                                    <div className="md:col-span-2 grid grid-cols-2 gap-8">
+                                        <div>
+                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Passing Mark (%)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                value={quizData.passingScore}
+                                                onChange={(e) => setQuizData({ ...quizData, passingScore: e.target.value })}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Timer (Minutes)</label>
+                                            <input
+                                                type="number"
+                                                className="input-field"
+                                                value={quizData.duration}
+                                                onChange={(e) => setQuizData({ ...quizData, duration: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {creationMode === 'ai' && (
+                                        <div className="md:col-span-2">
+                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">Difficulty Level</label>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                {[
+                                                    { value: 'easy',   label: 'Easy',   emoji: '🟢', desc: 'Basic concepts' },
+                                                    { value: 'medium', label: 'Medium', emoji: '🟡', desc: 'Intermediate' },
+                                                    { value: 'hard',   label: 'Hard',   emoji: '🔴', desc: 'Advanced' },
+                                                    { value: 'mixed',  label: 'Mixed',  emoji: '🎯', desc: 'All levels' },
+                                                ].map(({ value, label, emoji, desc }) => (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        onClick={() => setQuizData({ ...quizData, difficulty: value })}
+                                                        className={`flex flex-col items-center justify-center py-4 px-3 rounded-2xl border-2 font-bold transition-all duration-200 ${
+                                                            quizData.difficulty === value
+                                                                ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200'
+                                                                : 'bg-slate-50 border-slate-100 text-slate-500 hover:border-blue-200 hover:bg-blue-50'
+                                                        }`}
+                                                    >
+                                                        <span className="text-2xl mb-1">{emoji}</span>
+                                                        <span className="font-black uppercase tracking-widest text-[11px]">{label}</span>
+                                                        <span className={`text-[10px] mt-0.5 ${quizData.difficulty === value ? 'text-blue-100' : 'text-slate-400'}`}>{desc}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={creationMode === 'ai' ? handleGenerate : handleAnalyzePDF}
+                                    disabled={loading}
+                                    className={`w-full mt-10 flex flex-col items-center justify-center py-5 text-xl rounded-3xl font-black transition-all ${
+                                        creationMode === 'ai' 
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-100' 
+                                        : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-200'
+                                    }`}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        {loading ? <Loader2 className="animate-spin" /> : (creationMode === 'ai' ? <Sparkles size={24} /> : <Upload size={24} />)}
+                                        <span>{creationMode === 'ai' ? 'Generate with AI' : 'Analyze & Extract PDF'}</span>
+                                    </div>
+                                    {loading && loadingStatus && (
+                                        <span className="text-[10px] mt-2 font-bold uppercase tracking-widest text-white/70 animate-pulse">
+                                            {loadingStatus}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     )}
 
@@ -306,7 +532,23 @@ const AddQuiz = () => {
                                     <div key={i} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm relative group hover:shadow-xl hover:shadow-blue-50 transition-all duration-300">
                                         <div className="flex justify-between items-start mb-6">
                                             <span className="bg-slate-100 text-slate-400 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-50">Question {i + 1}</span>
-                                            <button className="text-red-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={20} /></button>
+                                            <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button 
+                                                    onClick={() => openEditor(i)}
+                                                    className="p-2 text-blue-400 hover:text-blue-600 transition-colors"
+                                                >
+                                                    <Pencil size={18} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => {
+                                                        const newQuestions = quizData.questions.filter((_, idx) => idx !== i);
+                                                        setQuizData({ ...quizData, questions: newQuestions });
+                                                    }}
+                                                    className="p-2 text-red-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
                                         </div>
                                         <h3 className="font-black text-slate-800 text-xl mb-8 leading-tight tracking-tight">{q.question}</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -321,6 +563,14 @@ const AddQuiz = () => {
                                         </div>
                                     </div>
                                 ))}
+
+                                <button 
+                                    onClick={() => openEditor()}
+                                    className="w-full py-8 border-2 border-dashed border-slate-200 rounded-[2rem] text-slate-400 font-black uppercase tracking-widest hover:border-blue-400 hover:text-blue-600 transition-all flex flex-col items-center justify-center space-y-3"
+                                >
+                                    <Plus size={32} />
+                                    <span>Add Question Manually</span>
+                                </button>
                             </div>
 
                             <div className="flex space-x-6 mt-12">
@@ -421,6 +671,69 @@ const AddQuiz = () => {
                     )}
                 </div>
             </div>
+
+            {/* Question Editor Modal */}
+            {isEditorOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setIsEditorOpen(false)}></div>
+                    <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl relative z-10 overflow-hidden animate-scale-up">
+                        <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                                {editingIndex === -1 ? 'Add New Question' : `Edit Question ${editingIndex + 1}`}
+                            </h2>
+                            <button onClick={() => setIsEditorOpen(false)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                                <Plus size={24} className="rotate-45" />
+                            </button>
+                        </div>
+                        
+                        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Question Description</label>
+                                <textarea
+                                    className="input-field min-h-[100px] py-4 resize-none"
+                                    placeholder="Enter the question text here..."
+                                    value={tempQuestion.question}
+                                    onChange={(e) => setTempQuestion({ ...tempQuestion, question: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Options (Click circle to set as correct)</label>
+                                {tempQuestion.options.map((opt, i) => (
+                                    <div key={i} className="flex items-center space-x-4 group">
+                                        <button
+                                            onClick={() => setTempQuestion({ ...tempQuestion, correctAnswer: tempQuestion.options[i] })}
+                                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border-2 ${tempQuestion.correctAnswer === tempQuestion.options[i] && tempQuestion.options[i] !== '' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-slate-50 border-slate-100 text-slate-300 hover:border-blue-200'}`}
+                                        >
+                                            {tempQuestion.correctAnswer === tempQuestion.options[i] && tempQuestion.options[i] !== '' ? <CheckCircle2 size={20} /> : <span className="font-black">{String.fromCharCode(65 + i)}</span>}
+                                        </button>
+                                        <input
+                                            type="text"
+                                            className={`flex-1 input-field py-3 transition-all ${tempQuestion.correctAnswer === tempQuestion.options[i] && tempQuestion.options[i] !== '' ? 'border-blue-200 bg-blue-50/30' : ''}`}
+                                            placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                                            value={opt}
+                                            onChange={(e) => {
+                                                const newOptions = [...tempQuestion.options];
+                                                newOptions[i] = e.target.value;
+                                                setTempQuestion({ ...tempQuestion, options: newOptions });
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="p-8 border-t border-slate-50 bg-slate-50/50 flex space-x-4">
+                            <button onClick={() => setIsEditorOpen(false)} className="flex-1 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-100 transition-all">
+                                Cancel
+                            </button>
+                            <button onClick={saveQuestion} className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

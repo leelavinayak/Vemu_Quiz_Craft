@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { 
-    Trophy, 
+import {
+    Trophy,
     ChevronLeft,
     Clock,
     User,
@@ -60,7 +60,7 @@ const QuizLeaderboard = () => {
     const { quiz, leaderboard = [] } = data;
 
     // Filter leaderboard based on search term
-    const filteredLeaderboard = leaderboard.filter(attempt => 
+    const filteredLeaderboard = leaderboard.filter(attempt =>
         attempt.studentId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         attempt.studentId?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         attempt.studentId?.collegeName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -68,7 +68,7 @@ const QuizLeaderboard = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-6 pt-12 pb-20">
-            <button 
+            <button
                 onClick={() => navigate(-1)}
                 className="flex items-center space-x-2 text-slate-400 hover:text-blue-600 font-bold mb-10 transition-colors group"
             >
@@ -95,14 +95,14 @@ const QuizLeaderboard = () => {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white min-w-[280px] text-center shadow-2xl shadow-blue-900/20 transform hover:scale-105 transition-transform duration-500">
                         <Medal className="text-yellow-400 mx-auto mb-4" size={48} />
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Top Achiever</p>
                         <p className="text-xl font-black truncate text-white">{leaderboard[0]?.studentId?.name || 'N/A'}</p>
                         <div className="mt-4 flex items-center justify-center space-x-2">
-                             <span className="text-blue-400 font-black text-4xl">{leaderboard[0]?.percentage || 0}%</span>
-                             <span className="text-[10px] font-black text-slate-500 uppercase">Score</span>
+                            <span className="text-blue-400 font-black text-4xl">{leaderboard[0]?.percentage || 0}%</span>
+                            <span className="text-[10px] font-black text-slate-500 uppercase">Score</span>
                         </div>
                     </div>
                 </div>
@@ -119,8 +119,8 @@ const QuizLeaderboard = () => {
 
                     <div className="relative w-full md:w-80">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="Search by student, email or college..."
                             className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all"
                             value={searchTerm}
@@ -152,7 +152,7 @@ const QuizLeaderboard = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-6">
-                                            <div 
+                                            <div
                                                 className="flex items-center space-x-4 cursor-pointer"
                                                 onClick={() => navigate(`/admin/student/${attempt.studentId?._id}`)}
                                             >
@@ -188,7 +188,7 @@ const QuizLeaderboard = () => {
                                             </div>
                                         </td>
                                         <td className="px-10 py-6 text-right">
-                                            <button 
+                                            <button
                                                 onClick={() => navigate(`/admin/review-attempt/${attempt._id}`)}
                                                 className="p-3 hover:bg-blue-600 hover:text-white rounded-2xl text-slate-300 transition-all shadow-sm bg-white border border-slate-100 hover:border-blue-600 group-hover:shadow-xl group-hover:shadow-blue-100"
                                                 title="Detailed Review"

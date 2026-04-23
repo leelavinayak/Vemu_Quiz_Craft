@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { 
-    Search, 
-    Trash2, 
-    ExternalLink, 
-    Loader2, 
+import {
+    Search,
+    Trash2,
+    ExternalLink,
+    Loader2,
     ArrowUpDown,
     Download,
     Pencil,
@@ -14,6 +14,7 @@ import {
     Users
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const UserManagement = () => {
     const [students, setStudents] = useState([]);
@@ -22,7 +23,7 @@ const UserManagement = () => {
     const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     // Modal State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
@@ -32,8 +33,10 @@ const UserManagement = () => {
         collegeId: '',
         collegeName: '',
         branch: '',
-        year: ''
+        year: '',
+        section: ''
     });
+    const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
     useEffect(() => {
         fetchStudents();
@@ -50,15 +53,13 @@ const UserManagement = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this student and all their results?')) {
-            try {
-                await api.delete(`/admin/users/${id}`);
-                setStudents(students.filter(s => s._id !== id));
-                toast.success('Student record purged successfully');
-            } catch (err) {
-                toast.error('Failed to eliminate student record');
-            }
+    const deleteStudent = async () => {
+        try {
+            await api.delete(`/admin/users/${confirmDelete.id}`);
+            setStudents(students.filter(s => s._id !== confirmDelete.id));
+            toast.success('Student record purged successfully');
+        } catch (err) {
+            toast.error('Failed to eliminate student record');
         }
     };
 
@@ -70,7 +71,8 @@ const UserManagement = () => {
             collegeId: student.collegeId || '',
             collegeName: student.collegeName || '',
             branch: student.branch || '',
-            year: student.year || ''
+            year: student.year || '',
+            section: student.section || ''
         });
         setIsEditModalOpen(true);
     };
@@ -99,8 +101,8 @@ const UserManagement = () => {
         if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
         if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
-    }).filter(s => 
-        s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    }).filter(s =>
+        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -125,6 +127,14 @@ const UserManagement = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-12 pb-12 page-enter">
+            <ConfirmModal 
+                isOpen={confirmDelete.open}
+                onClose={() => setConfirmDelete({ open: false, id: null })}
+                onConfirm={deleteStudent}
+                title="Expel Student"
+                message="Are you sure you want to delete this student and all their results? This action is permanent."
+                confirmText="Delete Permanently"
+            />
             {/* Page Header */}
             <div className="mb-6 md:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -195,10 +205,10 @@ const UserManagement = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                        {paginatedStudents.map((student) => (
+                            {paginatedStudents.map((student) => (
                                 <tr key={student._id} className="hover:bg-blue-50/30 transition-all duration-300 group">
                                     <td className="px-4 md:px-8 py-4 md:py-6">
-                                        <div 
+                                        <div
                                             className="flex items-center space-x-3 cursor-pointer group/student"
                                             onClick={() => navigate(`/admin/student/${student._id}`)}
                                         >
@@ -224,8 +234,8 @@ const UserManagement = () => {
                                     <td className="px-4 md:px-8 py-4 md:py-6 text-center">
                                         <div className="flex items-center justify-center space-x-2">
                                             <div className="w-20 bg-slate-100 h-2 rounded-full overflow-hidden">
-                                                <div 
-                                                    className="h-full rounded-full bg-blue-600 transition-all duration-700" 
+                                                <div
+                                                    className="h-full rounded-full bg-blue-600 transition-all duration-700"
                                                     style={{ width: `${student.averageScore}%` }}
                                                 ></div>
                                             </div>
@@ -236,24 +246,24 @@ const UserManagement = () => {
                                     </td>
                                     <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                                         <div className="flex items-center justify-end space-x-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button 
-                                                className="p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-all" 
+                                            <button
+                                                className="p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-all"
                                                 title="View Performance"
                                                 onClick={() => navigate(`/admin/student/${student._id}`)}
                                             >
                                                 <ExternalLink size={20} />
                                             </button>
-                                            <button 
-                                                className="p-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all" 
+                                            <button
+                                                className="p-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
                                                 title="Edit Student"
                                                 onClick={() => handleEditClick(student)}
                                             >
                                                 <Pencil size={20} />
                                             </button>
-                                            <button 
-                                                className="p-3 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" 
+                                            <button
+                                                className="p-3 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                                                 title="Delete Student"
-                                                onClick={() => handleDelete(student._id)}
+                                                onClick={() => setConfirmDelete({ open: true, id: student._id })}
                                             >
                                                 <Trash2 size={20} />
                                             </button>
@@ -303,11 +313,10 @@ const UserManagement = () => {
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentPage(item)}
-                                        className={`w-9 h-9 rounded-xl text-xs font-black transition-all ${
-                                            currentPage === item
+                                        className={`w-9 h-9 rounded-xl text-xs font-black transition-all ${currentPage === item
                                                 ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
                                                 : 'bg-slate-50 border border-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100'
-                                        }`}
+                                            }`}
                                     >
                                         {item}
                                     </button>
@@ -327,120 +336,153 @@ const UserManagement = () => {
                 </div>
             )}
 
-            {/* Slide-over Edit Modal */}
+            {/* Centered Edit Modal */}
             {isEditModalOpen && (
-                <div className="fixed inset-0 z-[100] flex justify-end">
-                    <div 
-                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
                         onClick={() => setIsEditModalOpen(false)}
                     ></div>
-                    <div className="relative w-full max-w-md bg-white h-full shadow-2xl animate-slide-in-right flex flex-col">
-                        <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+                    <div className="relative w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl animate-scale-up flex flex-col overflow-hidden max-h-[90vh]">
+                        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                             <div className="flex items-center space-x-4">
-                                <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-100">
+                                <div className="bg-blue-600 p-3 rounded-2xl shadow-lg shadow-blue-100">
                                     <UserCheck className="text-white" size={24} />
                                 </div>
-                                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Edit Student</h2>
+                                <div>
+                                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Edit Student Profile</h2>
+                                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Update academic governance</p>
+                                </div>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setIsEditModalOpen(false)}
-                                className="p-2 text-slate-300 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all"
+                                className="p-2 text-slate-300 hover:text-red-500 transition-all"
                             >
-                                <X size={24} />
+                                <X size={28} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
-                            <div className="space-y-6">
-                                <section className="space-y-4">
-                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">General Access</h3>
-                                    <div className="space-y-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Full Legal Name</label>
-                                            <input 
-                                                type="text" 
-                                                className="input-field"
+                        <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* General Section */}
+                                <div className="md:col-span-2">
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">General Identity</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Legal Name</label>
+                                            <input
+                                                type="text"
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700"
                                                 value={editFormData.name}
-                                                onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
+                                                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                                                 required
                                             />
                                         </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Digital Identity (Email)</label>
-                                            <input 
-                                                type="email" 
-                                                className="input-field"
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
+                                            <input
+                                                type="email"
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700"
                                                 value={editFormData.email}
-                                                onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                                                onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
                                                 required
                                             />
                                         </div>
                                     </div>
-                                </section>
+                                </div>
 
-                                <section className="space-y-4 pt-4">
-                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Academic Governance</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="col-span-2 space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Institutional Entity</label>
-                                            <input 
-                                                type="text" 
-                                                className="input-field"
+                                {/* Academic Section */}
+                                <div className="md:col-span-2">
+                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">Institutional Governance</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="md:col-span-2 space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">College / University Name</label>
+                                            <input
+                                                type="text"
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700"
                                                 value={editFormData.collegeName}
-                                                onChange={(e) => setEditFormData({...editFormData, collegeName: e.target.value})}
+                                                onChange={(e) => setEditFormData({ ...editFormData, collegeName: e.target.value })}
                                             />
                                         </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Member ID</label>
-                                            <input 
-                                                type="text" 
-                                                className="input-field"
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">College ID (Roll No)</label>
+                                            <input
+                                                type="text"
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700"
                                                 value={editFormData.collegeId}
-                                                onChange={(e) => setEditFormData({...editFormData, collegeId: e.target.value})}
+                                                onChange={(e) => setEditFormData({ ...editFormData, collegeId: e.target.value })}
                                             />
                                         </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Academic Year</label>
-                                            <select 
-                                                className="input-field"
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Academic Year</label>
+                                            <select
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700 cursor-pointer"
                                                 value={editFormData.year}
-                                                onChange={(e) => setEditFormData({...editFormData, year: e.target.value})}
+                                                onChange={(e) => setEditFormData({ ...editFormData, year: e.target.value })}
                                             >
                                                 <option value="">Select Year</option>
-                                                <option value="1st Year">1st Year</option>
-                                                <option value="2nd Year">2nd Year</option>
-                                                <option value="3rd Year">3rd Year</option>
-                                                <option value="4th Year">4th Year</option>
+                                                <option value="1">1st Year</option>
+                                                <option value="2">2nd Year</option>
+                                                <option value="3">3rd Year</option>
+                                                <option value="4">4th Year</option>
                                             </select>
                                         </div>
-                                        <div className="col-span-2 space-y-1">
-                                            <label className="text-xs font-bold text-slate-600 ml-1">Branch / Stream</label>
-                                            <input 
-                                                type="text" 
-                                                className="input-field"
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Department / Branch</label>
+                                            <select
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700 cursor-pointer"
                                                 value={editFormData.branch}
-                                                onChange={(e) => setEditFormData({...editFormData, branch: e.target.value})}
-                                            />
+                                                onChange={(e) => setEditFormData({ ...editFormData, branch: e.target.value })}
+                                            >
+                                                <option value="">Select Branch</option>
+                                                <option value="CSE">CSE</option>
+                                                <option value="ECE">ECE</option>
+                                                <option value="EEE">EEE</option>
+                                                <option value="MECH">MECH</option>
+                                                <option value="CIVIL">CIVIL</option>
+                                                <option value="IT">IT</option>
+                                                <option value="AIML">AIML</option>
+                                                <option value="AI">AI</option>
+                                                <option value="AIDS">AIDS</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Assigned Section</label>
+                                            <select
+                                                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-700 cursor-pointer"
+                                                value={editFormData.section}
+                                                onChange={(e) => setEditFormData({ ...editFormData, section: e.target.value })}
+                                            >
+                                                <option value="">Select Section</option>
+                                                <option value="A">Section A</option>
+                                                <option value="B">Section B</option>
+                                                <option value="C">Section C</option>
+                                                <option value="D">Section D</option>
+                                                <option value="E">Section E</option>
+                                                <option value="F">Section F</option>
+                                                <option value="G">Section G</option>
+                                                <option value="H">Section H</option>
+                                            </select>
                                         </div>
                                     </div>
-                                </section>
+                                </div>
                             </div>
                         </form>
 
-                        <div className="p-8 border-t border-slate-100 bg-slate-50/50 flex gap-3">
-                            <button 
+                        <div className="p-8 border-t border-slate-50 bg-slate-50/50 flex flex-col md:flex-row gap-4">
+                            <button
                                 type="button"
                                 onClick={() => setIsEditModalOpen(false)}
-                                className="flex-1 py-4 font-black text-slate-500 hover:text-slate-800 transition-all text-sm uppercase tracking-widest"
+                                className="flex-1 py-4 font-black text-slate-400 hover:text-slate-600 transition-all text-xs uppercase tracking-widest bg-white rounded-2xl border border-slate-200"
                             >
-                                Cancel
+                                Discard Changes
                             </button>
-                            <button 
+                            <button
                                 onClick={handleEditSubmit}
-                                className="flex-[2] btn-blue py-4 flex items-center justify-center space-x-2 shadow-xl shadow-blue-100"
+                                className="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center space-x-2 shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95"
                             >
-                                <Save size={20} />
-                                <span>Commit Changes</span>
+                                <Save size={18} />
+                                <span>Save Student Profile</span>
                             </button>
                         </div>
                     </div>

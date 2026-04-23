@@ -26,15 +26,18 @@ const ForgotPassword = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <div className="w-full max-w-md p-10 rounded-[2.5rem] shadow-sm border border-slate-100 animate-fade-in bg-white">
-                <div className="flex flex-col items-center mb-10">
+                <div className="flex flex-col items-center mb-10 text-center">
                     <div className="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg shadow-blue-100">
                         <KeyRound className="text-white w-8 h-8" />
                     </div>
-                    <h1 className="text-3xl font-black text-slate-800 tracking-tight">Recover Access</h1>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight flex flex-col md:flex-row md:items-center leading-tight">
+                        <span>Recover</span>
+                        <span className="text-blue-600 md:ml-2">Access Portal</span>
+                    </h1>
                     <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-2">Enter email to receive OTP</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-8" autoComplete="on">
                     <div>
                         <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Work Email</label>
                         <div className="relative group">
@@ -44,8 +47,9 @@ const ForgotPassword = () => {
                             <input
                                 type="email"
                                 required
-                                className="input-field pl-12 py-4"
-                                placeholder="name@company.com"
+                                autoComplete="email"
+                                className="input-field pl-12 py-4 placeholder:text-slate-200"
+                                placeholder="your-email@vemu.org"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />

@@ -14,7 +14,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerStudent = async (req, res) => {
-    const { name, email, password, role, profilePic, collegeId, branch, year, collegeName } = req.body;
+    const { name, email, password, role, profilePic, collegeId, branch, year, section, collegeName } = req.body;
 
     if (role === 'admin') {
         return res.status(403).json({ message: 'Admin registration is not allowed. Contact the Programmers Club for admin access.' });
@@ -45,6 +45,7 @@ const registerStudent = async (req, res) => {
                 collegeId: collegeId || '',
                 branch: branch || '',
                 year: year || '',
+                section: section || '',
                 collegeName: collegeName || '',
                 isVerified: role === 'admin' ? false : true 
             }])
@@ -71,6 +72,7 @@ const registerStudent = async (req, res) => {
                 collegeId: user.collegeId,
                 branch: user.branch,
                 year: user.year,
+                section: user.section,
                 collegeName: user.collegeName,
                 token: generateToken(user.id)
             });
@@ -162,6 +164,7 @@ const loginUser = async (req, res) => {
                 collegeId: user.collegeId,
                 branch: user.branch,
                 year: user.year,
+                section: user.section,
                 collegeName: user.collegeName,
                 token: generateToken(user.id)
             });
@@ -189,6 +192,7 @@ const updateProfile = async (req, res) => {
                 collegeId: req.body.collegeId !== undefined ? req.body.collegeId : user.collegeId,
                 branch: req.body.branch !== undefined ? req.body.branch : user.branch,
                 year: req.body.year !== undefined ? req.body.year : user.year,
+                section: req.body.section !== undefined ? req.body.section : user.section,
                 collegeName: req.body.collegeName !== undefined ? req.body.collegeName : user.collegeName
             };
 
@@ -210,6 +214,7 @@ const updateProfile = async (req, res) => {
                 collegeId: updatedUser.collegeId,
                 branch: updatedUser.branch,
                 year: updatedUser.year,
+                section: updatedUser.section,
                 collegeName: updatedUser.collegeName
             });
         } else {

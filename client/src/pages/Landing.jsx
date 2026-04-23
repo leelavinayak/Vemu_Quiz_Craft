@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    ShieldCheck, 
-    GraduationCap, 
-    ArrowRight, 
-    Sparkles, 
-    Zap, 
-    BarChart3, 
+import {
+    ShieldCheck,
+    GraduationCap,
+    ArrowRight,
+    Sparkles,
+    Zap,
+    BarChart3,
     Lock,
     Globe,
     Cpu
@@ -40,17 +40,17 @@ const Landing = () => {
                         <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-100">
                             <Sparkles className="text-white" size={24} />
                         </div>
-                        <span className="text-2xl font-black text-slate-800 tracking-tight">Quiz<span className="text-blue-600">Craft</span></span>
+                        <span className="text-2xl font-black text-slate-800 tracking-tight">Weekly <span className="text-blue-600">Aptitude Test</span></span>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <button 
-                            onClick={() => navigate('/login')} 
+                        <button
+                            onClick={() => navigate('/login')}
                             className="text-sm font-black text-slate-500 hover:text-blue-600 transition-colors px-4 py-2"
                         >
                             Log In
                         </button>
-                        <button 
-                            onClick={() => navigate('/register')} 
+                        <button
+                            onClick={() => navigate('/register')}
                             className="bg-slate-900 text-white text-sm font-black px-6 py-2.5 rounded-xl hover:bg-blue-600 transition-all shadow-xl shadow-slate-100"
                         >
                             Get Started
@@ -77,11 +77,11 @@ const Landing = () => {
                                 <span className="text-blue-600">Reimagined.</span>
                             </h1>
                             <p className="text-xl text-slate-500 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0 animate-fade-in">
-                                The enterprise-grade intelligence platform for academic certification. 
+                                The enterprise-grade intelligence platform for academic certification.
                                 Powered by AI, protected by extreme anti-cheating protocols.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 animate-fade-in">
-                                <button 
+                                <button
                                     onClick={() => navigate('/register')}
                                     className="w-full sm:w-auto bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-blue-200 hover:scale-105 transition-all flex items-center justify-center group"
                                 >
@@ -121,7 +121,7 @@ const Landing = () => {
                                     <p className="text-3xl font-black">Active Node</p>
                                 </div>
                             </div>
-                            
+
                             {/* Floating Stats */}
                             <div className="absolute -top-10 -right-10 bg-white p-6 rounded-3xl shadow-2xl border border-slate-50 hidden lg:block animate-bounce-subtle">
                                 <div className="flex items-center space-x-4">
@@ -176,7 +176,7 @@ const Landing = () => {
                             <p className="text-slate-500 font-bold mb-10 leading-relaxed">
                                 Deploy assessments, monitor real-time behavioral data, and generate AI-driven insights for your institution.
                             </p>
-                            <button 
+                            <button
                                 onClick={() => navigate('/register', { state: { role: 'admin' } })}
                                 className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black flex items-center justify-center space-x-3 hover:bg-blue-600 transition-all"
                             >
@@ -194,7 +194,7 @@ const Landing = () => {
                             <p className="text-slate-500 font-bold mb-10 leading-relaxed">
                                 Join secure examination environments, track your performance history, and achieve global certification.
                             </p>
-                            <button 
+                            <button
                                 onClick={() => navigate('/register', { state: { role: 'student' } })}
                                 className="w-full py-5 border-2 border-slate-900 text-slate-900 rounded-2xl font-black flex items-center justify-center space-x-3 hover:bg-slate-900 hover:text-white transition-all shadow-xl shadow-slate-100"
                             >

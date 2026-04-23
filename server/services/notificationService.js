@@ -39,9 +39,10 @@ const notify = async (userId, type, title, message, emailOptions = null) => {
 };
 
 /**
- * Notify All Students
+ * Notify Targeted Students
+ * @param {Object} filters - { targetYears: [], targetBranches: [], targetSections: [] }
  */
-const notifyAllStudents = async (title, message, emailHtml = null) => {
+const notifyAllStudents = async (title, message, emailHtml = null, filters = {}) => {
     try {
         const { data: students } = await supabase
             .from('users')
@@ -49,7 +50,22 @@ const notifyAllStudents = async (title, message, emailHtml = null) => {
             .eq('role', 'student');
         
         if (students && students.length > 0) {
-            const notifications = students.map(student => ({
+            // Apply Filters if provided
+            const targetedStudents = students.filter(student => {
+                const sYear = String(student.year || '').trim();
+                const sBranch = String(student.branch || '').trim();
+                const sSection = String(student.section || '').trim();
+
+                const matchesYear = !filters.targetYears || filters.targetYears.length === 0 || filters.targetYears.includes(sYear);
+                const matchesBranch = !filters.targetBranches || filters.targetBranches.length === 0 || filters.targetBranches.includes(sBranch);
+                const matchesSection = !filters.targetSections || filters.targetSections.length === 0 || filters.targetSections.includes(sSection);
+
+                return matchesYear && matchesBranch && matchesSection;
+            });
+
+            if (targetedStudents.length === 0) return;
+
+            const notifications = targetedStudents.map(student => ({
                 userId: student.id,
                 type: 'info',
                 message: `${title}: ${message}`
@@ -60,7 +76,7 @@ const notifyAllStudents = async (title, message, emailHtml = null) => {
 
             // Send emails (Warning: Instant blast, might need queuing for large sets)
             if (emailHtml) {
-                for (const student of students) {
+                for (const student of targetedStudents) {
                     sendEmail({
                         email: student.email,
                         subject: title,

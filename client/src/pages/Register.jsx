@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-    UserPlus, 
-    User as UserIcon, 
-    Mail, 
-    Lock, 
-    Settings, 
-    Loader2, 
-    ShieldCheck, 
-    GraduationCap, 
+import {
+    UserPlus,
+    User as UserIcon,
+    Mail,
+    Lock,
+    Settings,
+    Loader2,
+    ShieldCheck,
+    GraduationCap,
     Sparkles,
     ChevronRight,
     ArrowLeft,
@@ -32,7 +32,8 @@ const Register = () => {
         collegeId: '',
         collegeName: '',
         branch: '',
-        year: ''
+        year: '',
+        section: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -65,7 +66,7 @@ const Register = () => {
         setLoading(true);
         try {
             const res = await register(formData);
-            
+
             if (res.isPendingVerification) {
                 toast.success('Admin registered! Please verify OTP sent to email.');
                 navigate('/verify-admin', { state: { email: formData.email } });
@@ -93,14 +94,17 @@ const Register = () => {
 
             <div className="w-full max-w-xl relative z-10">
                 {/* Branding */}
-                <div className="flex flex-col items-center mb-10 animate-fade-in">
+                <div className="flex flex-col items-center mb-10 animate-fade-in text-center">
                     <div className="bg-blue-600 p-4 rounded-2xl shadow-xl shadow-blue-100 mb-4 rotate-3">
                         <Sparkles className="text-white" size={32} />
                     </div>
-                    <span className="text-3xl font-black text-slate-800 tracking-tight">Quiz<span className="text-blue-600">Craft</span></span>
+                    <span className="text-xl md:text-3xl font-black text-slate-800 tracking-tight flex flex-col md:flex-row md:items-center leading-tight">
+                        <span>Weekly</span>
+                        <span className="text-blue-600 md:ml-2">Aptitude Test</span>
+                    </span>
                 </div>
 
-                <div className="bg-white p-10 md:p-12 rounded-[3rem] shadow-xl shadow-slate-200/60 border border-slate-100 animate-scale-up">
+                <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-xl shadow-slate-200/60 border border-slate-100 animate-scale-up">
                     <div className="mb-10 text-center">
                         <div className="flex items-center justify-center space-x-2 mb-6">
                             <span className={`h-1.5 rounded-full transition-all duration-500 ${step === 1 ? 'w-8 bg-blue-600' : 'w-4 bg-slate-100'}`}></span>
@@ -108,7 +112,7 @@ const Register = () => {
                                 <span className={`h-1.5 rounded-full transition-all duration-500 ${step === 2 ? 'w-8 bg-blue-600' : 'w-4 bg-slate-100'}`}></span>
                             )}
                         </div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Create Account</h1>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-2">Create Account</h1>
                         <p className="text-slate-500 font-medium text-sm">
                             {step === 1 ? 'Tell us about yourself.' : 'Academic profile setup.'}
                         </p>
@@ -120,7 +124,7 @@ const Register = () => {
                         </div>
                     )}
 
-                    <form onSubmit={step === 2 || formData.role === 'admin' ? handleSubmit : (e) => e.preventDefault()} className="space-y-6">
+                    <form onSubmit={step === 2 || formData.role === 'admin' ? handleSubmit : (e) => e.preventDefault()} className="space-y-6" autoComplete="on">
                         {step === 1 ? (
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -134,6 +138,7 @@ const Register = () => {
                                                 name="name"
                                                 type="text"
                                                 required
+                                                autoComplete="name"
                                                 className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700"
                                                 placeholder="Enter student name"
                                                 value={formData.name}
@@ -152,8 +157,9 @@ const Register = () => {
                                                 name="email"
                                                 type="email"
                                                 required
-                                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700"
-                                                placeholder="210M1A0537@vemu.org"
+                                                autoComplete="email"
+                                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700 placeholder:text-slate-200"
+                                                placeholder="your-email@vemu.org"
                                                 value={formData.email}
                                                 onChange={handleChange}
                                             />
@@ -272,24 +278,54 @@ const Register = () => {
                                             onChange={handleChange}
                                         >
                                             <option value="">Select Year</option>
-                                            <option value="1st Year">1st year</option>
-                                            <option value="2nd Year">2nd year</option>
-                                            <option value="3rd Year">3rd year</option>
-                                            <option value="4th Year">4th year</option>
+                                            <option value="1">1st Year</option>
+                                            <option value="2">2nd Year</option>
+                                            <option value="3">3rd Year</option>
+                                            <option value="4">4th Year</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Section</label>
+                                        <select
+                                            name="section"
+                                            required
+                                            className="w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700"
+                                            value={formData.section}
+                                            onChange={handleChange}
+                                        >
+                                            <option value="">Select Section</option>
+                                            <option value="A">Section A</option>
+                                            <option value="B">Section B</option>
+                                            <option value="C">Section C</option>
+                                            <option value="D">Section D</option>
+                                            <option value="E">Section E</option>
+                                            <option value="F">Section F</option>
+                                            <option value="G">Section G</option>
+                                            <option value="H">Section H</option>
                                         </select>
                                     </div>
 
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Academic Specialization</label>
-                                        <input
+                                        <select
                                             name="branch"
-                                            type="text"
                                             required
                                             className="w-full px-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:bg-white transition-all font-medium text-slate-700"
-                                            placeholder="e.g. Computer Science"
                                             value={formData.branch}
                                             onChange={handleChange}
-                                        />
+                                        >
+                                            <option value="">Select Branch</option>
+                                            <option value="CSE">CSE</option>
+                                            <option value="ECE">ECE</option>
+                                            <option value="EEE">EEE</option>
+                                            <option value="MECH">MECH</option>
+                                            <option value="CIVIL">CIVIL</option>
+                                            <option value="IT">IT</option>
+                                            <option value="AIML">AIML</option>
+                                            <option value="AI">AI</option>
+                                            <option value="AIDS">AIDS</option>
+                                        </select>
                                     </div>
                                 </div>
 

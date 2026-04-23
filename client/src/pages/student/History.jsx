@@ -7,10 +7,12 @@ import {
     ChevronRight,
     Loader2,
     Search,
-    Filter
+    Filter,
+    Trash2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const MyHistory = () => {
     const [attempts, setAttempts] = useState([]);
@@ -19,18 +21,19 @@ const MyHistory = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const fetchHistory = async () => {
+        try {
+            const endpoint = user.role === 'admin' ? `/admin/history?limit=${limit}` : `/student/results?limit=${limit}`;
+            const { data } = await api.get(endpoint);
+            setAttempts(data);
+        } catch (err) {
+            console.error('Failed to fetch history', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchHistory = async () => {
-            try {
-                const endpoint = user.role === 'admin' ? `/admin/history?limit=${limit}` : `/student/results?limit=${limit}`;
-                const { data } = await api.get(endpoint);
-                setAttempts(data);
-            } catch (err) {
-                console.error('Failed to fetch history', err);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchHistory();
     }, [user.role, limit]);
 
@@ -106,7 +109,7 @@ const MyHistory = () => {
                                     {user.role === 'admin' && attempt.studentId && (
                                         <div className="flex items-center space-x-2 mb-2 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 w-fit">
                                             <div className="w-5 h-5 rounded-full bg-blue-600 text-[10px] flex items-center justify-center text-white font-black">
-                                                {attempt.studentId.name.charAt(0)}
+                                                {attempt.studentId.name?.charAt(0) || '?'}
                                             </div>
                                             <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{attempt.studentId.name}</span>
                                         </div>
@@ -119,14 +122,14 @@ const MyHistory = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-12">
+                            <div className="flex items-center space-x-6 md:space-x-12">
                                 <div className="text-right">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Score Result</p>
                                     <div className="flex items-end justify-end space-x-1">
-                                        <span className={`text-4xl font-black tracking-tighter ${attempt.status === 'pass' ? 'text-green-600' : 'text-red-600'}`}>
+                                        <span className={`text-2xl md:text-4xl font-black tracking-tighter ${attempt.status === 'pass' ? 'text-green-600' : 'text-red-600'}`}>
                                             {attempt.percentage}%
                                         </span>
-                                        <span className="text-slate-300 font-black text-lg mb-1.5">/ 100</span>
+                                        <span className="text-slate-300 font-black text-xs md:text-lg mb-1.5">/ 100</span>
                                     </div>
                                 </div>
                                 <ChevronRight className="w-6 h-6 text-slate-200 group-hover:text-blue-600 group-hover:translate-x-2 transition-all" />
