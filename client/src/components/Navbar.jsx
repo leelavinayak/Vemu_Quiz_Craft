@@ -224,11 +224,11 @@ const Navbar = () => {
                             </Link>
                              <Link to="/admin/reports" className={`mobile-menu-item ${activePage === 'reports' ? 'bg-blue-50 text-blue-600' : ''}`} onClick={() => setIsMenuOpen(false)}>
                                 <FileText size={20} />
-                                <span>Performance Analytics</span>
+                                <span>Assessment Reports</span>
                             </Link>
                             <Link to="/admin/add-quiz" className={`mobile-menu-item ${activePage === 'add-quiz' ? 'bg-blue-50 text-blue-600' : ''}`} onClick={() => setIsMenuOpen(false)}>
                                 <PlusCircle size={20} />
-                                <span>Generate Intelligence</span>
+                                <span>Add Assessment</span>
                             </Link>
                         </>
                     ) : (
@@ -258,7 +258,7 @@ const Navbar = () => {
                         className="w-full flex items-center space-x-3 p-4 rounded-xl font-black text-red-500 hover:bg-red-50 transition-all active:scale-95"
                     >
                         <LogOut size={20} />
-                        <span>Terminate Session</span>
+                        <span>Log Out</span>
                     </button>
                 </div>
             )}

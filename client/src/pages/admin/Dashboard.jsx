@@ -37,6 +37,8 @@ const AdminDashboard = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
+    const [quizSearchTerm, setQuizSearchTerm] = useState('');
+    const [tableSearchTerm, setTableSearchTerm] = useState('');
 
     const fetchStats = async () => {
         try {
