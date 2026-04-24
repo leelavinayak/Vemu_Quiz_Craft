@@ -58,8 +58,12 @@ const Footer = () => {
                     {/* Segment 1: Brand Section */}
                     <div className="space-y-8">
                         <div className="flex items-center space-x-3 group cursor-default">
-                            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2.5 rounded-2xl shadow-xl shadow-blue-500/20 group-hover:rotate-6 transition-transform duration-500">
-                                <Sparkles className="text-white" size={24} />
+                            <div className="bg-white p-1.5 rounded-xl shadow-xl shadow-blue-500/10 group-hover:rotate-6 transition-transform duration-500 overflow-hidden border border-white/10">
+                                <img 
+                                    src="/weekly_aptitude_test_logo.png" 
+                                    alt="Logo" 
+                                    className="w-8 h-8 object-contain"
+                                />
                             </div>
                             <span className="text-3xl font-black text-white tracking-tighter">
                                 Weekly <span className="text-blue-500">Aptitude Test</span>

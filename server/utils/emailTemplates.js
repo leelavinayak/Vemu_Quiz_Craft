@@ -10,26 +10,27 @@ const darkColor = '#0f172a';
 const slateColor = '#64748b';
 const lightBg = '#f1f5f9';
 
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
 const baseTemplate = (content, title) => `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: ${lightBg}; margin: 0; padding: 20px; color: ${darkColor}; -webkit-font-smoothing: antialiased; }
         .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 32px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05); border: 1px solid rgba(226, 232, 240, 0.8); }
         .header { background: ${primaryGradient}; padding: 60px 40px; text-align: center; position: relative; }
-        .logo { color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.04em; }
-        .logo span { opacity: 0.6; font-weight: 400; }
+        .logo { color: white; font-size: 28px; font-weight: 800; letter-spacing: -0.04em; }
+        .logo span { opacity: 0.7; font-weight: 400; }
         .content { padding: 50px 40px; line-height: 1.7; }
-        .title { font-size: 30px; font-weight: 800; color: ${darkColor}; margin-bottom: 24px; letter-spacing: -0.02em; line-height: 1.2; }
+        .title { font-size: 28px; font-weight: 800; color: ${darkColor}; margin-bottom: 24px; letter-spacing: -0.02em; line-height: 1.2; }
         .text { font-size: 16px; color: ${slateColor}; margin-bottom: 20px; font-weight: 500; }
         .footer { padding: 40px; text-align: center; font-size: 11px; color: #94a3b8; background: #fafafa; border-top: 1px solid #f1f5f9; }
-        .button { display: inline-block; padding: 18px 36px; background-color: ${primaryColor}; color: white !important; border-radius: 18px; font-weight: 700; text-decoration: none; margin-top: 10px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+        .button-container { text-align: center; margin-top: 30px; }
+        .button { display: inline-block; padding: 18px 36px; background-color: ${primaryColor}; color: white !important; border-radius: 18px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
         .stats-box { background: #f8fafc; border-radius: 24px; padding: 30px; margin: 30px 0; border: 1px solid #e2e8f0; }
         .stat-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .stat-item:last-child { margin-bottom: 0; }
@@ -38,12 +39,13 @@ const baseTemplate = (content, title) => `
         .badge { display: inline-block; padding: 4px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
         .badge-success { background: #d1fae5; color: #059669; }
         .badge-error { background: #fee2e2; color: #dc2626; }
+        .divider { height: 1px; background: #f1f5f9; margin: 30px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">Weekly Aptitude Test</div>
+            <div class="logo">Weekly <span>Aptitude Test</span></div>
         </div>
         <div class="content">
             <h1 class="title">${title}</h1>
@@ -53,8 +55,8 @@ const baseTemplate = (content, title) => `
             &copy; 2026 <strong>Weekly Aptitude Test Systems</strong>. All Rights Reserved.<br>
             <p style="margin-top: 10px; opacity: 0.8;">You are receiving this because you hold an active academic identity on our secure cloud nodes.</p>
             <div style="margin-top: 20px;">
-                <span style="margin: 0 8px; text-decoration: none; color: ${primaryColor}; font-weight: bold;">Support Center</span>
-                <span style="margin: 0 8px; text-decoration: none; color: ${primaryColor}; font-weight: bold;">Privacy Protocol</span>
+                <a href="${CLIENT_URL}/profile" style="margin: 0 8px; text-decoration: none; color: ${primaryColor}; font-weight: bold;">Profile Settings</a>
+                <a href="${CLIENT_URL}" style="margin: 0 8px; text-decoration: none; color: ${primaryColor}; font-weight: bold;">Login Portal</a>
             </div>
         </div>
     </div>
@@ -73,7 +75,9 @@ const getWelcomeTemplate = (name) => baseTemplate(`
         <p style="font-size: 14px; color: ${slateColor}; margin: 5px 0;">✓ Link with your academic domain</p>
     </div>
 
-    <a href="${process.env.CLIENT_URL}" class="button">Initialize Portal Access</a>
+    <div class="button-container">
+        <a href="${CLIENT_URL}/login" class="button">Initialize Portal Access</a>
+    </div>
 `, 'Identity Confirmed.');
 
 const getNewQuizTemplate = (quizTitle, language) => baseTemplate(`
@@ -93,7 +97,9 @@ const getNewQuizTemplate = (quizTitle, language) => baseTemplate(`
         </div>
     </div>
     <p class="text">Early completion is recommended to maintain your performance ranking.</p>
-    <a href="${process.env.CLIENT_URL}/student/home" class="button">Begin Assessment Now</a>
+    <div class="button-container">
+        <a href="${CLIENT_URL}/student/home" class="button">Begin Assessment Now</a>
+    </div>
 `, 'New Deployment.');
 
 const getAttemptStartedTemplate = (quizTitle, studentName, isAdmin = false) => baseTemplate(`
@@ -113,6 +119,11 @@ const getAttemptStartedTemplate = (quizTitle, studentName, isAdmin = false) => b
         </div>
     </div>
     <p class="text">${isAdmin ? 'Real-time telemetry is available in your administration hub.' : 'The clock is active. Minimize distractions until termination.'}</p>
+    <div class="button-container">
+        <a href="${isAdmin ? `${CLIENT_URL}/admin/dashboard` : `${CLIENT_URL}/student/home`}" class="button">
+            ${isAdmin ? 'Enter Admin Hub' : 'Return to Assessment'}
+        </a>
+    </div>
 `, 'Session Logic Loaded.');
 
 const getQuizResultTemplate = (quizTitle, studentName, score, percentage, status) => baseTemplate(`
@@ -132,7 +143,9 @@ const getQuizResultTemplate = (quizTitle, studentName, score, percentage, status
         </div>
     </div>
     <p class="text">Detailed behavioral and academic insights are now available in your history logs.</p>
-    <a href="${process.env.CLIENT_URL}/history" class="button">View Analytical Report</a>
+    <div class="button-container">
+        <a href="${CLIENT_URL}/history" class="button">View Analytical Report</a>
+    </div>
 `, 'Result Processed.');
 
 const getOTPTemplate = (otp, type = 'register') => baseTemplate(`
@@ -143,7 +156,11 @@ const getOTPTemplate = (otp, type = 'register') => baseTemplate(`
         <span style="font-size: 56px; font-weight: 800; color: ${primaryColor}; letter-spacing: 0.2em; display: block; filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.1));">${otp}</span>
     </div>
     
-    <p style="text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500;">Valid for 10 minutes. If this wasn't you, terminate your session immediately.</p>
+    <p style="text-align: center; color: #94a3b8; font-size: 13px; font-weight: 500; margin-bottom: 30px;">Valid for 10 minutes. If this wasn't you, terminate your session immediately.</p>
+    
+    <div class="button-container">
+        <a href="${CLIENT_URL}/login" class="button">Continue to Login</a>
+    </div>
 `, type === 'register' ? 'Identity Authentication' : 'Security Access Recovery');
 
 module.exports = {

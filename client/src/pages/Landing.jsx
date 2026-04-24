@@ -37,8 +37,12 @@ const Landing = () => {
             <header className="fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-slate-100">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                        <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-100">
-                            <Sparkles className="text-white" size={24} />
+                        <div className="bg-white p-1 rounded-xl shadow-md border border-slate-100 overflow-hidden">
+                            <img 
+                                src="/weekly_aptitude_test_logo.png" 
+                                alt="Logo" 
+                                className="w-8 h-8 object-contain"
+                            />
                         </div>
                         <span className="text-2xl font-black text-slate-800 tracking-tight">Weekly <span className="text-blue-600">Aptitude Test</span></span>
                     </div>

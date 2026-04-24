@@ -49,8 +49,12 @@ const Login = () => {
             <div className="w-full max-w-md relative z-10">
                 {/* Branding */}
                 <div className="flex flex-col items-center mb-10 animate-fade-in text-center">
-                    <div className="bg-blue-600 p-4 rounded-2xl shadow-xl shadow-blue-100 mb-4 rotate-3">
-                        <Sparkles className="text-white" size={32} />
+                    <div className="bg-white p-2 rounded-2xl shadow-xl shadow-slate-100 mb-4 rotate-3 border border-slate-100 overflow-hidden">
+                        <img 
+                            src="/weekly_aptitude_test_logo.png" 
+                            alt="Logo" 
+                            className="w-12 h-12 md:w-16 md:h-16 object-contain"
+                        />
                     </div>
                     <span className="text-xl md:text-3xl font-black text-slate-800 tracking-tight flex flex-col md:flex-row md:items-center leading-tight">
                         <span>Weekly</span>

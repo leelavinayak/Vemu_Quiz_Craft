@@ -34,10 +34,14 @@ const VerifyAdmin = () => {
                 <div className="absolute inset-0 bg-slate-900/40 mix-blend-multiply"></div>
                 <div className="relative z-10 w-full h-full p-16 flex flex-col justify-between">
                     <div className="flex items-center space-x-3">
-                        <div className="bg-white/20 backdrop-blur-xl p-2.5 rounded-2xl border border-white/30">
-                            <Sparkles className="text-white" size={28} />
+                        <div className="bg-white p-1.5 rounded-xl shadow-md border border-white/30 overflow-hidden">
+                            <img 
+                                src="/weekly_aptitude_test_logo.png" 
+                                alt="Logo" 
+                                className="w-8 h-8 object-contain"
+                            />
                         </div>
-                        <span className="text-3xl font-black text-white tracking-tight">AI<span className="text-indigo-300">Quiz</span></span>
+                        <span className="text-3xl font-black text-white tracking-tight">Weekly <span className="text-indigo-300">Aptitude Test</span></span>
                     </div>
 
                     <div className="max-w-md">

@@ -14,7 +14,6 @@ import {
     Menu,
     X,
     ShieldCheck,
-    Sparkles,
     FileText
 } from 'lucide-react';
 
@@ -101,8 +100,12 @@ const Navbar = () => {
             <div className="w-full flex justify-between items-center transition-all duration-500 max-w-7xl mx-auto">
                 {/* Logo / Title — Left End */}
                 <Link to="/" className="flex items-center space-x-2 md:space-x-3 group shrink-0 active:scale-95 transition-all duration-300">
-                    <div className="bg-blue-600 p-2 md:p-2.5 rounded-xl md:rounded-2xl shadow-lg shadow-blue-100 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 rotate-3">
-                        <Sparkles className="text-white size-4 md:size-6" />
+                    <div className="bg-white p-1.5 rounded-xl shadow-md group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 rotate-3 overflow-hidden border border-slate-100">
+                        <img 
+                            src="/weekly_aptitude_test_logo.png" 
+                            alt="Logo" 
+                            className="w-8 h-8 md:w-10 md:h-10 object-contain"
+                        />
                     </div>
                     <span className="text-sm md:text-2xl font-black tracking-tighter text-slate-800 flex flex-col md:flex-row md:items-center leading-none">
                         <span>Weekly</span>
